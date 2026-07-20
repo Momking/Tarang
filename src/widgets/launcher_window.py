@@ -53,6 +53,9 @@ class LauncherWindow(Gtk.ApplicationWindow):
         outer.set_valign(Gtk.Align.START)
 
         outer.set_margin_top(60)
+        outer.set_margin_bottom(40)
+        outer.set_margin_start(40)
+        outer.set_margin_end(40)
 
         content = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
@@ -71,8 +74,6 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.set_child(outer)
 
         # Search entry focus
-        self.search.grab_focus()
-
         controller = Gtk.ShortcutController()
 
         shortcut = Gtk.Shortcut.new(
@@ -85,6 +86,8 @@ class LauncherWindow(Gtk.ApplicationWindow):
         controller.add_shortcut(shortcut)
 
         self.search.add_controller(controller)
+
+        self.search.grab_focus()
 
     def on_search_changed(self, entry):
 

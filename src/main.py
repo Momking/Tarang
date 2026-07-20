@@ -6,6 +6,9 @@ from gi.repository import Gtk
 
 from widgets.launcher_window import LauncherWindow
 
+from pathlib import Path
+
+from services.theme_service import ThemeService
 
 class LauncherApplication(Gtk.Application):
     def __init__(self):
@@ -16,6 +19,14 @@ class LauncherApplication(Gtk.Application):
     def do_activate(self):
         window = LauncherWindow(self)
         window.present()
+
+        theme = ThemeService()
+
+        theme.load(
+            Path(__file__).parent /
+            "resources" /
+            "style.css"
+        )
 
 
 if __name__ == "__main__":
