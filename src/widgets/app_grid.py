@@ -1,5 +1,6 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, Gio
 
+from models.app_object import AppObject
 from widgets.app_card import AppCard
 
 
@@ -8,28 +9,51 @@ class AppGrid(Gtk.ScrolledWindow):
     def __init__(self):
         super().__init__()
 
-        self.set_vexpand(True)
-        self.set_hexpand(True)
+        self.store = Gio.ListStore()
 
-        self.flowbox = Gtk.FlowBox()
-
-        self.flowbox.set_selection_mode(
-            Gtk.SelectionMode.NONE
+        self.selection = Gtk.NoSelection(
+            model=self.store
         )
 
-        self.flowbox.set_max_children_per_line(6)
-        self.flowbox.set_row_spacing(16)
-        self.flowbox.set_column_spacing(16)
+        self.factory = Gtk.SignalListItemFactory()
 
-        self.set_child(self.flowbox)
+        self.factory.connect(
+            "setup",
+            self.on_setup,
+        )
+
+        self.factory.connect(
+            "bind",
+            self.on_bind,
+        )
+
+        self.grid = Gtk.GridView(
+            model=self.selection,
+            factory=self.factory,
+        )
+
+        self.set_child(self.grid)
+
+    def on_setup(self, factory, list_item):
+
+        card = AppCard()
+
+        list_item.set_child(card)
+
+    def on_bind(self, factory, list_item):
+
+        obj = list_item.get_item()
+
+        card = list_item.get_child()
+
+        card.set_app(obj.app)
 
     def set_apps(self, apps):
 
-        while (child := self.flowbox.get_first_child()) is not None:
-            self.flowbox.remove(child)
+        self.store.remove_all()
 
         for app in apps:
-            card = AppCard()
-            card.set_app(app)
 
-            self.flowbox.insert(card, -1)
+            self.store.append(
+                AppObject(app)
+            )
