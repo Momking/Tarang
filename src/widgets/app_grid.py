@@ -1,11 +1,35 @@
-from gi.repository import Gio
+from gi.repository import Gtk
 
-from models.app_object import AppObject
+from widgets.app_card import AppCard
 
 
-class AppGrid(Gtk.GridView):
+class AppGrid(Gtk.ScrolledWindow):
 
     def __init__(self):
-
         super().__init__()
-        store = Gio.ListStore.new(AppObject)
+
+        self.set_vexpand(True)
+        self.set_hexpand(True)
+
+        self.flowbox = Gtk.FlowBox()
+
+        self.flowbox.set_selection_mode(
+            Gtk.SelectionMode.NONE
+        )
+
+        self.flowbox.set_max_children_per_line(6)
+        self.flowbox.set_row_spacing(16)
+        self.flowbox.set_column_spacing(16)
+
+        self.set_child(self.flowbox)
+
+    def set_apps(self, apps):
+
+        while (child := self.flowbox.get_first_child()) is not None:
+            self.flowbox.remove(child)
+
+        for app in apps:
+            card = AppCard()
+            card.set_app(app)
+
+            self.flowbox.insert(card, -1)
