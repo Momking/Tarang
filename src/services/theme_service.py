@@ -9,9 +9,15 @@ class ThemeService:
 
         self.provider = Gtk.CssProvider()
 
-    def load(self, css_path: Path):
+    def load(self, *files: Path):
 
-        self.provider.load_from_path(str(css_path))
+        css = ""
+
+        for file in files:
+            css += file.read_text()
+            css += "\n"
+
+        self.provider.load_from_string(css)
 
         Gtk.StyleContext.add_provider_for_display(
             Gtk.Display.get_default(),
