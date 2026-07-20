@@ -23,3 +23,5 @@ def setup(window):
         Gtk4LayerShell.Edge.TOP,
         True,
     )
+
+    Gtk4LayerShell.set_namespace(window, "tarang")
