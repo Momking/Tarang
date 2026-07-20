@@ -5,12 +5,14 @@ from services.search_service import SearchService
 
 from widgets.search_bar import SearchBar
 from widgets.app_grid import AppGrid
+from wayland.layer_shell import setup as setup_layer_shell
 
 
 class LauncherWindow(Gtk.ApplicationWindow):
 
     def __init__(self, application):
         super().__init__(application=application)
+        setup_layer_shell(self)
 
         self.set_title("Gremlin Launcher")
         self.set_default_size(900, 700)
