@@ -18,12 +18,10 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.application_service = ApplicationService()
         self.search_service = SearchService()
 
-        self.all_apps = self.load_apps()
 
         self.search = SearchBar()
         self.grid = AppGrid()
-
-        self.grid.set_apps(self.all_apps)
+        self.load_apps()
 
         layout = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,

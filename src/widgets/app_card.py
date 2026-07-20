@@ -27,6 +27,11 @@ class AppCard(Gtk.Button):
         self.box.append(self.image)
         self.box.append(self.label)
 
+        self.connect(
+            "clicked",
+            self.on_clicked,
+        )
+
         self.set_child(self.box)
 
     def set_app(self, app):
@@ -36,3 +41,13 @@ class AppCard(Gtk.Button):
 
         if app.icon is not None:
             self.image.set_from_gicon(app.icon)
+
+    def on_clicked(self, button):
+
+        if self.app is None:
+            return
+
+        self.app.app_info.launch(
+            [],
+            None,
+        )
