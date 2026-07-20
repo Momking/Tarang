@@ -12,30 +12,24 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
     def __init__(self, application):
         super().__init__(application=application)
+
+        # Configure window
+        self.set_title("Tarang Launcher")
+        self.set_default_size(900, 700)
+        self.set_decorated(False)
+
+        # Initialise layer shell
         setup_layer_shell(self)
 
-        self.set_title("Gremlin Launcher")
-        self.set_default_size(900, 700)
-
+        # Create services
         self.application_service = ApplicationService()
         self.search_service = SearchService()
 
-
+        # Create Widgets
         self.search = SearchBar()
-        self.search.grab_focus()
         self.grid = AppGrid()
-        self.load_apps()
 
-        layout = Gtk.Box(
-            orientation=Gtk.Orientation.VERTICAL,
-            spacing=12,
-        )
-
-        layout.append(self.search)
-        layout.append(self.grid)
-
-        self.set_child(layout)
-
+        # Connect signals
         self.search.connect(
             "search-changed",
             self.on_search_changed,
@@ -45,6 +39,39 @@ class LauncherWindow(Gtk.ApplicationWindow):
             "activate",
             self.on_activate,
         )
+
+        #Load applications
+        self.load_apps()
+
+        # Build layout
+        outer = Gtk.Box()
+
+        outer.set_hexpand(True)
+        outer.set_vexpand(True)
+
+        outer.set_halign(Gtk.Align.CENTER)
+        outer.set_valign(Gtk.Align.START)
+
+        outer.set_margin_top(60)
+
+        content = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=12,
+        )
+
+        content.add_css_class("launcher")
+
+        content.set_size_request(900, 700)
+
+        content.append(self.search)
+        content.append(self.grid)
+
+        outer.append(content)
+
+        self.set_child(outer)
+
+        # Search entry focus
+        self.search.grab_focus()
 
         controller = Gtk.ShortcutController()
 
