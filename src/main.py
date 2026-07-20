@@ -22,10 +22,11 @@ class LauncherApplication(Gtk.Application):
 
         theme = ThemeService()
 
+        resources = Path(__file__).parent / "resources"
+
         theme.load(
-            Path(__file__).parent /
-            "resources" /
-            "style.css"
+            resources / "base.css",
+            resources / "generated.css",
         )
 
 
