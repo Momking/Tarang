@@ -1,6 +1,9 @@
 from gi.repository import Gtk
 
 from services.application_service import ApplicationService
+from services.search_service import SearchService
+
+from widgets.search_bar import SearchBar
 from widgets.app_grid import AppGrid
 
 
@@ -13,11 +16,21 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.set_default_size(900, 700)
 
         self.application_service = ApplicationService()
+        self.search_service = SearchService()
 
+        self.all_apps = self.application_service.load()
+
+        self.search = SearchBar()
         self.grid = AppGrid()
 
-        self.set_child(self.grid)
+        self.grid.set_apps(self.all_apps)
 
-        apps = self.application_service.load()
+        layout = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=12,
+        )
 
-        self.grid.set_apps(apps)
+        layout.append(self.search)
+        layout.append(self.grid)
+
+        self.set_child(layout)
