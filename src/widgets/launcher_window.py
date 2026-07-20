@@ -20,6 +20,7 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
 
         self.search = SearchBar()
+        self.search.grab_focus()
         self.grid = AppGrid()
         self.load_apps()
 
@@ -38,6 +39,11 @@ class LauncherWindow(Gtk.ApplicationWindow):
             self.on_search_changed,
         )
 
+        self.search.connect(
+            "activate",
+            self.on_activate,
+        )
+
     def on_search_changed(self, entry):
 
         query = entry.get_text()
@@ -48,6 +54,17 @@ class LauncherWindow(Gtk.ApplicationWindow):
         )
 
         self.grid.set_apps(results)
+
+    def on_activate(self, entry):
+
+        child = self.grid.flowbox.get_first_child()
+
+        if child is None:
+            return
+
+        card = child.get_child()
+
+        card.on_clicked(None)
 
     def load_apps(self):
         self.all_apps = self.application_service.load()
