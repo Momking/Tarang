@@ -21,3 +21,12 @@ class AppCard(Gtk.Button):
         self.box.append(self.label)
 
         self.set_child(self.box)
+
+    def set_app(self, app):
+
+        self.app = app
+
+        self.label.set_text(app.name)
+
+        if app.icon:
+            self.image.set_from_gicon(app.icon)
