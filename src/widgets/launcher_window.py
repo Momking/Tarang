@@ -44,6 +44,19 @@ class LauncherWindow(Gtk.ApplicationWindow):
             self.on_activate,
         )
 
+        controller = Gtk.ShortcutController()
+
+        shortcut = Gtk.Shortcut.new(
+            Gtk.ShortcutTrigger.parse_string("Escape"),
+            Gtk.CallbackAction.new(
+                lambda *_: self.close()
+            ),
+        )
+
+        controller.add_shortcut(shortcut)
+
+        self.add_controller(controller)
+
     def on_search_changed(self, entry):
 
         query = entry.get_text()
