@@ -1,5 +1,7 @@
 import gi
 
+from services.application_service import ApplicationService
+
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk
 
@@ -18,4 +20,11 @@ class Application(Gtk.Application):
         window.present()
 
 
-Application().run()
+# Application().run()
+service = ApplicationService()
+
+apps = service.load()
+
+assert len(apps) > 0
+
+print(apps[0])
