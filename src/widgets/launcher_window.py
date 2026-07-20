@@ -55,7 +55,7 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         controller.add_shortcut(shortcut)
 
-        self.add_controller(controller)
+        self.search.add_controller(controller)
 
     def on_search_changed(self, entry):
 
