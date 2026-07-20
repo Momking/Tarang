@@ -18,7 +18,7 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.application_service = ApplicationService()
         self.search_service = SearchService()
 
-        self.all_apps = self.application_service.load()
+        self.all_apps = self.load_apps()
 
         self.search = SearchBar()
         self.grid = AppGrid()
@@ -34,3 +34,24 @@ class LauncherWindow(Gtk.ApplicationWindow):
         layout.append(self.grid)
 
         self.set_child(layout)
+
+        self.search.connect(
+            "search-changed",
+            self.on_search_changed,
+        )
+
+    def on_search_changed(self, entry):
+
+        query = entry.get_text()
+
+        results = self.search_service.search(
+            query,
+            self.all_apps,
+        )
+
+        self.grid.set_apps(results)
+
+    def load_apps(self):
+        self.all_apps = self.application_service.load()
+
+        self.grid.set_apps(self.all_apps)
