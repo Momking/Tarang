@@ -15,7 +15,7 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         # Configure window
         self.set_title("Tarang Launcher")
-        self.set_default_size(900, 700)
+        # self.set_default_size(900, 700)
         self.set_decorated(False)
 
         # Initialise layer shell
@@ -51,11 +51,12 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         outer.set_halign(Gtk.Align.CENTER)
         outer.set_valign(Gtk.Align.START)
+        # outer.set_homogeneous(True)
 
-        outer.set_margin_top(60)
-        outer.set_margin_bottom(40)
-        outer.set_margin_start(40)
-        outer.set_margin_end(40)
+        # outer.set_margin_top(100)
+        # outer.set_margin_bottom(40)
+        # outer.set_margin_start(40)
+        # outer.set_margin_end(40)
 
         content = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
