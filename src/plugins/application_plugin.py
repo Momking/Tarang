@@ -19,6 +19,7 @@ class ApplicationPlugin(Plugin):
 
         self.apps = application_service
         self.usage = usage_service
+        self._cache = self.apps.load()
 
     def search(
         self,
@@ -28,7 +29,7 @@ class ApplicationPlugin(Plugin):
 
         query = query.casefold().strip()
 
-        apps = self.apps.load()
+        apps = self._cache
 
         if not query:
             matches = apps
