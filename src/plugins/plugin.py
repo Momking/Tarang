@@ -11,6 +11,8 @@ class Plugin(ABC):
 
     enabled: bool = True
 
+    priority = 100
+
     @abstractmethod
     def search(
         self,

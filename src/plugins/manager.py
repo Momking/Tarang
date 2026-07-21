@@ -23,20 +23,16 @@ class PluginManager:
 
         self.plugins.append(plugin)
 
-    def search(
-        self,
-        query: str,
-        limit: int = 20,
-    ):
+    def search(self, query, limit=50):
 
         results = []
 
-        for plugin in self.plugins:
-
-            plugin_results = plugin.search(query, limit)
-
-            for result in plugin_results:
-                results.append((plugin, result))
+        for plugin in sorted(
+            self.plugins,
+            key=lambda p: p.priority,
+            reverse=True,
+        ):
+            results.extend(plugin.search(query, limit))
 
         return results
 

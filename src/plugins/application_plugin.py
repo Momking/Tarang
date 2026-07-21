@@ -9,6 +9,8 @@ class ApplicationPlugin(Plugin):
 
     description = "Search installed desktop applications"
 
+    priority = 100
+
     def __init__(
         self,
         application_service,
