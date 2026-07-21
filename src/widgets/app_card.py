@@ -57,3 +57,12 @@ class AppCard(Gtk.Button):
             return
 
         self.emit("activated")
+
+    def set_selected(
+        self,
+        selected,
+    ):
+        if selected:
+            self.add_css_class("selected")
+        else:
+            self.remove_css_class("selected")

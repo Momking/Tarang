@@ -9,3 +9,9 @@ window {
     padding:20px;
 
 }
+
+.app-card.selected {
+    background: alpha(@accent_color, 0.15);
+    border: 2px solid @accent_color;
+    border-radius: 12px;
+}
