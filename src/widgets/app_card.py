@@ -45,10 +45,10 @@ class AppCard(Gtk.Button):
     def set_app(self, app):
         self.app = app
 
-        self.label.set_text(app.name)
+        self.label.set_text(app[1].title)
 
-        if app.icon is not None:
-            self.image.set_from_gicon(app.icon)
+        if app[1].icon is not None:
+            self.image.set_from_gicon(app[1].icon)
 
     def on_clicked(self, button):
 
