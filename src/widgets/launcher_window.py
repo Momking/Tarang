@@ -2,6 +2,7 @@ from gi.repository import Gtk
 
 from services.application_service import ApplicationService
 from services.search_service import SearchService
+from services.usage_service import UsageService
 
 from widgets.search_bar import SearchBar
 from widgets.app_grid import AppGrid
@@ -13,6 +14,8 @@ class LauncherWindow(Gtk.ApplicationWindow):
     def __init__(self, application):
         super().__init__(application=application)
 
+        # Create services
+        self.usage_service = UsageService()
         # Configure window
         self.set_title("Tarang Launcher")
         # self.set_default_size(900, 700)
@@ -127,6 +130,10 @@ class LauncherWindow(Gtk.ApplicationWindow):
         grid,
         app,
     ):
+
+        app_id = app.app_info.get_id()
+
+        self.usage_service.launched(app_id)
 
         app.app_info.launch(
             [],
