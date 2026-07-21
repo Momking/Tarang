@@ -29,6 +29,11 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.search = SearchBar()
         self.grid = AppGrid()
 
+        self.grid.connect(
+            "app-activated",
+            self.on_app_activated,
+        )
+
         # Connect signals
         self.search.connect(
             "search-changed",
@@ -116,3 +121,16 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.all_apps = self.application_service.load()
 
         self.grid.set_apps(self.all_apps)
+
+    def on_app_activated(
+        self,
+        grid,
+        app,
+    ):
+
+        app.app_info.launch(
+            [],
+            None,
+        )
+
+        self.close()
