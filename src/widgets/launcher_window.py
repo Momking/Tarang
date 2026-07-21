@@ -1,8 +1,10 @@
 from gi.repository import Gtk, GLib
 
 from services.application_service import ApplicationService
-from services.search_service import SearchService
 from services.usage_service import UsageService
+
+from plugins.manager import PluginManager
+from plugins.application_plugin import ApplicationPlugin
 
 from widgets.search_bar import SearchBar
 from widgets.app_grid import AppGrid
@@ -25,7 +27,11 @@ class LauncherWindow(Gtk.ApplicationWindow):
         # Create services
         self.usage_service = UsageService()
         self.application_service = ApplicationService()
-        self.search_service = SearchService(self.usage_service)
+
+        self.plugin_manager = PluginManager(
+            self.application_service,
+            self.usage_service,
+        )
 
         # Create Widgets
         self.search = SearchBar()
@@ -47,8 +53,9 @@ class LauncherWindow(Gtk.ApplicationWindow):
             self.on_activate,
         )
 
-        #Load applications
-        self.load_apps()
+        results = self.plugin_manager.search("")
+
+        self.grid.set_apps(results)
 
         # Build layout
         outer = Gtk.Box()
@@ -103,9 +110,8 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         query = entry.get_text()
 
-        results = self.search_service.search(
+        results = self.plugin_manager.search(
             query,
-            self.all_apps,
         )
 
         self.grid.set_apps(results)
@@ -121,24 +127,14 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         card.on_clicked(None)
 
-    def load_apps(self):
-        self.all_apps = self.application_service.load()
-
-        self.grid.set_apps(self.all_apps)
-
     def on_app_activated(
         self,
         grid,
         app,
     ):
 
-        app_id = app.app_info.get_id()
-
-        self.usage_service.launched(app_id)
-
-        app.app_info.launch(
-            [],
-            None,
-        )
+        self.plugin_manager.activate(
+                app,
+            )
 
         self.close()
