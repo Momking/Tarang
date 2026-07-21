@@ -107,11 +107,9 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
     def on_search_changed(self, entry):
 
-        query = entry.get_text()
-
-        results = self.plugin_manager.search(query)
-
-        self.grid.set_results(results)
+        self.controller.search(
+            entry.get_text()
+        )
 
     def on_activate(self, entry):
 
