@@ -1,19 +1,21 @@
 from abc import ABC, abstractmethod
 
+from models.search_result import SearchResult
+
 
 class Plugin(ABC):
 
     @abstractmethod
     def search(
         self,
-        query,
-        limit,
-    ):
+        query: str,
+        limit: int,
+    ) -> list[SearchResult]:
         ...
 
     @abstractmethod
     def activate(
         self,
-        result,
-    ):
+        result: SearchResult,
+    ) -> None:
         ...
