@@ -1,9 +1,17 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 from widgets.app_card import AppCard
 
 
 class AppGrid(Gtk.ScrolledWindow):
+
+    __gsignals__ = {
+            "app-activated": (
+                GObject.SignalFlags.RUN_FIRST,
+                None,
+                (object,),
+            ),
+        }
 
     def __init__(self):
         super().__init__()
@@ -33,4 +41,16 @@ class AppGrid(Gtk.ScrolledWindow):
             card = AppCard()
             card.set_app(app)
 
+            card.connect(
+                "activated",
+                self.on_card_activated,
+            )
+
             self.flowbox.insert(card, -1)
+
+    def on_card_activated(self, card):
+
+        self.emit(
+            "app-activated",
+            card.app,
+        )
