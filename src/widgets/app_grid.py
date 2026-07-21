@@ -32,13 +32,22 @@ class AppGrid(Gtk.ScrolledWindow):
 
         self.set_child(self.flowbox)
 
+        self.selected_index = 0
+        self.cards = []
+
     def set_results(self, results):
 
         self.clear()
 
+        self.cards.clear()
+
         for result in results:
+
             card = AppCard()
+
             card.set_result(result)
+
+            self.cards.append(card)
 
             card.connect(
                 "activated",
@@ -47,6 +56,9 @@ class AppGrid(Gtk.ScrolledWindow):
 
             self.flowbox.insert(card, -1)
 
+        self.selected_index = 0
+        self.update_selection()
+
     def on_card_activated(self, card):
 
         self.emit(
@@ -54,16 +66,46 @@ class AppGrid(Gtk.ScrolledWindow):
             card.result,
         )
 
-    def activate_first(self):
+    def activate_selected(self):
 
-        child = self.flowbox.get_first_child()
-
-        if child is None:
+        if not self.cards:
             return
 
-        card = child.get_child()
+        self.cards[
+            self.selected_index
+        ].on_clicked(None)
 
-        card.on_clicked(None)
+    def update_selection(self):
+
+        for i, card in enumerate(self.cards):
+
+            card.set_selected(
+                i == self.selected_index
+            )
+
+    def move_next(self):
+
+        if not self.cards:
+            return
+
+        self.selected_index = min(
+            self.selected_index + 1,
+            len(self.cards) - 1,
+        )
+
+        self.update_selection()
+
+    def move_previous(self):
+
+        if not self.cards:
+            return
+
+        self.selected_index = max(
+            self.selected_index - 1,
+            0,
+        )
+
+        self.update_selection()
 
     def clear(self):
 
