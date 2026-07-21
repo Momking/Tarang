@@ -42,17 +42,18 @@ class AppCard(Gtk.Button):
 
         self.set_child(self.box)
 
-    def set_app(self, app):
-        self.app = app
+    def set_result(self, result):
+        self.result = result
+        print(result)
 
-        self.label.set_text(app[1].title)
+        self.label.set_text(result.result.title)
 
-        if app[1].icon is not None:
-            self.image.set_from_gicon(app[1].icon)
+        if result.result.icon is not None:
+            self.image.set_from_gicon(result.result.icon)
 
     def on_clicked(self, button):
 
-        if self.app is None:
+        if self.result is None:
             return
 
         self.emit("activated")

@@ -32,14 +32,14 @@ class AppGrid(Gtk.ScrolledWindow):
 
         self.set_child(self.flowbox)
 
-    def set_apps(self, apps):
+    def set_results(self, results):
 
         while (child := self.flowbox.get_first_child()) is not None:
             self.flowbox.remove(child)
 
-        for app in apps:
+        for result in results:
             card = AppCard()
-            card.set_app(app)
+            card.set_result(result)
 
             card.connect(
                 "activated",
@@ -52,7 +52,7 @@ class AppGrid(Gtk.ScrolledWindow):
 
         self.emit(
             "app-activated",
-            card.app,
+            card.result,
         )
 
     def activate_first(self):

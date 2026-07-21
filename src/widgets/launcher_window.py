@@ -4,7 +4,6 @@ from services.application_service import ApplicationService
 from services.usage_service import UsageService
 
 from plugins.manager import PluginManager
-from plugins.application_plugin import ApplicationPlugin
 
 from widgets.search_bar import SearchBar
 from widgets.app_grid import AppGrid
@@ -55,7 +54,7 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         results = self.plugin_manager.search("")
 
-        self.grid.set_apps(results)
+        self.grid.set_results(results)
 
         # Build layout
         outer = Gtk.Box()
@@ -110,11 +109,9 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         query = entry.get_text()
 
-        results = self.plugin_manager.search(
-            query,
-        )
+        results = self.plugin_manager.search(query)
 
-        self.grid.set_apps(results)
+        self.grid.set_results(results)
 
     def on_activate(self, entry):
 
@@ -130,11 +127,8 @@ class LauncherWindow(Gtk.ApplicationWindow):
     def on_app_activated(
         self,
         grid,
-        app,
+        result,
     ):
-
-        self.plugin_manager.activate(
-                app,
-            )
+        self.plugin_manager.activate(result)
 
         self.close()
