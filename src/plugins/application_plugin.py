@@ -5,6 +5,10 @@ from models.search_result import SearchResult
 
 class ApplicationPlugin(Plugin):
 
+    name = "applications"
+
+    description = "Search installed desktop applications"
+
     def __init__(
         self,
         application_service,

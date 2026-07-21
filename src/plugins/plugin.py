@@ -5,6 +5,12 @@ from models.search_result import SearchResult
 
 class Plugin(ABC):
 
+    name: str = ""
+
+    description: str = ""
+
+    enabled: bool = True
+
     @abstractmethod
     def search(
         self,
