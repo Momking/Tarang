@@ -54,3 +54,6 @@ class AppGrid(Gtk.ScrolledWindow):
             "app-activated",
             card.app,
         )
+
+    def activate_first(self):
+        return self.flowbox.get_first_child()

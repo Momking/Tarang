@@ -1,4 +1,4 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, GLib
 
 from services.application_service import ApplicationService
 from services.search_service import SearchService
@@ -14,8 +14,6 @@ class LauncherWindow(Gtk.ApplicationWindow):
     def __init__(self, application):
         super().__init__(application=application)
 
-        # Create services
-        self.usage_service = UsageService()
         # Configure window
         self.set_title("Tarang Launcher")
         # self.set_default_size(900, 700)
@@ -25,8 +23,9 @@ class LauncherWindow(Gtk.ApplicationWindow):
         setup_layer_shell(self)
 
         # Create services
+        self.usage_service = UsageService()
         self.application_service = ApplicationService()
-        self.search_service = SearchService()
+        self.search_service = SearchService(self.usage_service)
 
         # Create Widgets
         self.search = SearchBar()
@@ -96,7 +95,9 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         self.search.add_controller(controller)
 
-        self.search.grab_focus()
+        GLib.idle_add(
+            self.search.grab_focus
+        )
 
     def on_search_changed(self, entry):
 
@@ -111,7 +112,7 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
     def on_activate(self, entry):
 
-        child = self.grid.flowbox.get_first_child()
+        child = self.grid.activate_first()
 
         if child is None:
             return
