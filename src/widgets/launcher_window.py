@@ -3,6 +3,8 @@ from gi.repository import Gtk, GLib
 from services.application_service import ApplicationService
 from services.usage_service import UsageService
 
+from controllers.search_controller import SearchController
+
 from plugins.manager import PluginManager
 
 from widgets.search_bar import SearchBar
@@ -36,6 +38,11 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.search = SearchBar()
         self.grid = AppGrid()
 
+        self.controller = SearchController(
+            self.plugin_manager,
+            self.grid,
+        )
+
         self.grid.connect(
             "app-activated",
             self.on_app_activated,
@@ -44,17 +51,17 @@ class LauncherWindow(Gtk.ApplicationWindow):
         # Connect signals
         self.search.connect(
             "search-changed",
-            self.on_search_changed,
+            lambda entry: self.controller.search(
+                entry.get_text()
+            ),
         )
 
         self.search.connect(
             "activate",
-            self.on_activate,
+            lambda *_: self.controller.activate_selected(),
         )
 
-        results = self.plugin_manager.search("")
-
-        self.grid.set_results(results)
+        self.controller.initialize()
 
         # Build layout
         outer = Gtk.Box()
@@ -105,28 +112,12 @@ class LauncherWindow(Gtk.ApplicationWindow):
             self.search.grab_focus
         )
 
-    def on_search_changed(self, entry):
-
-        self.controller.search(
-            entry.get_text()
-        )
-
-    def on_activate(self, entry):
-
-        child = self.grid.activate_first()
-
-        if child is None:
-            return
-
-        card = child.get_child()
-
-        card.on_clicked(None)
-
     def on_app_activated(
         self,
         grid,
         result,
     ):
-        self.plugin_manager.activate(result)
+
+        self.controller.activate(result)
 
         self.close()

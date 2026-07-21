@@ -34,8 +34,7 @@ class AppGrid(Gtk.ScrolledWindow):
 
     def set_results(self, results):
 
-        while (child := self.flowbox.get_first_child()) is not None:
-            self.flowbox.remove(child)
+        self.clear()
 
         for result in results:
             card = AppCard()
@@ -56,4 +55,17 @@ class AppGrid(Gtk.ScrolledWindow):
         )
 
     def activate_first(self):
-        return self.flowbox.get_first_child()
+
+        child = self.flowbox.get_first_child()
+
+        if child is None:
+            return
+
+        card = child.get_child()
+
+        card.on_clicked(None)
+
+    def clear(self):
+
+        while (child := self.flowbox.get_first_child()) is not None:
+            self.flowbox.remove(child)
