@@ -61,6 +61,18 @@ class LauncherWindow(Gtk.ApplicationWindow):
             lambda *_: self.controller.activate_selected(),
         )
 
+        self.search.connect(
+            "move-next",
+            lambda *_:
+                self.controller.move_next(),
+        )
+
+        self.search.connect(
+            "move-previous",
+            lambda *_:
+                self.controller.move_previous(),
+        )
+
         self.controller.initialize()
 
         # Build layout
@@ -71,12 +83,6 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         outer.set_halign(Gtk.Align.CENTER)
         outer.set_valign(Gtk.Align.START)
-        # outer.set_homogeneous(True)
-
-        # outer.set_margin_top(100)
-        # outer.set_margin_bottom(40)
-        # outer.set_margin_start(40)
-        # outer.set_margin_end(40)
 
         content = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,

@@ -23,4 +23,10 @@ class SearchController:
 
     def activate_selected(self):
 
-        self.grid.activate_first()
+        self.grid.activate_selected()
+
+    def move_next(self):
+            self.grid.move_next()
+    
+    def move_previous(self):
+        self.grid.move_previous()
