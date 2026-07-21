@@ -1,7 +1,15 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 
 class AppCard(Gtk.Button):
+
+    __gsignals__ = {
+            "activated": (
+                GObject.SignalFlags.RUN_FIRST,
+                None,
+                (),
+            ),
+        }
 
     def __init__(self):
         super().__init__()
@@ -47,7 +55,4 @@ class AppCard(Gtk.Button):
         if self.app is None:
             return
 
-        self.app.app_info.launch(
-            [],
-            None,
-        )
+        self.emit("activated")
