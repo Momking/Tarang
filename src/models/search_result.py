@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from models.app_info import AppInfo
+from gi.repository import Gio
 
 
 @dataclass(slots=True)
@@ -10,6 +10,6 @@ class SearchResult:
 
     subtitle: str
 
-    icon: object | None
+    icon: Gio.Icon | None
 
     data: object
