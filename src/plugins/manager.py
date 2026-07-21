@@ -1,4 +1,7 @@
-from plugins.application import ApplicationPlugin
+from plugins.application_plugin import ApplicationPlugin
+from plugins.calculator import CalculatorPlugin
+from models.plugin_result import PluginResult
+
 
 class PluginManager:
 
@@ -16,6 +19,10 @@ class PluginManager:
             )
         )
 
+        self.register(
+            CalculatorPlugin()
+        )
+
     def register(
         self,
         plugin,
@@ -23,24 +30,32 @@ class PluginManager:
 
         self.plugins.append(plugin)
 
-    def search(self, query, limit=50):
-
-        results = []
+    def search(self, query: str, limit: int = 50) -> list[PluginResult]:
+        results: list[PluginResult] = []
 
         for plugin in sorted(
             self.plugins,
             key=lambda p: p.priority,
             reverse=True,
         ):
-            results.extend(plugin.search(query, limit))
+            plugin_results = plugin.search(query, limit)
+
+            results.extend(
+                PluginResult(
+                    plugin=plugin,
+                    result=result,
+                )
+                for result in plugin_results
+            )
 
         return results
 
     def activate(
         self,
-        item,
+        result,
     ):
 
-        plugin, result = item
+        plugin = result.plugin
+        result = result.result
 
         plugin.activate(result)
