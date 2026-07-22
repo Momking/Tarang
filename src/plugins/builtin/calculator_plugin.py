@@ -11,6 +11,12 @@ PATTERN = re.compile(
 class CalculatorPlugin(Plugin):
 
     name = "calculator"
+    
+    description = "Evaluate mathematical expressions"
+
+    author = "Nishant"
+
+    version = "1.0.0"
 
     priority = 200
 

@@ -9,6 +9,12 @@ class FilePlugin(Plugin):
 
     name = "files"
 
+    description = "Search local files"
+
+    author = "Nishant"
+
+    version = "1.0.0"
+
     priority = 150
 
     def __init__(

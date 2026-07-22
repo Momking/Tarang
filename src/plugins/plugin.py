@@ -6,11 +6,10 @@ from models.search_result import SearchResult
 class Plugin(ABC):
 
     name: str = ""
-
     description: str = ""
-
     enabled: bool = True
-
+    version = "1.0.0"
+    author = ""
     priority = 100
 
     @abstractmethod
