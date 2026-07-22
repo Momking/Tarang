@@ -70,6 +70,7 @@ class ApplicationPlugin(Plugin):
                 subtitle=app.executable,
                 icon=app.icon,
                 data=app,
+                query=query,
             )
             for app, _ in matches[:limit]
         ]

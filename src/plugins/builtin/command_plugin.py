@@ -89,6 +89,7 @@ class CommandPlugin(Plugin):
                 subtitle=command.description,
                 icon=command.icon,
                 data=command,
+                query=query,
             )
             for _, command in results[:limit]
         ]

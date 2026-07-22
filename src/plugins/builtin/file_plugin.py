@@ -69,7 +69,7 @@ class FilePlugin(Plugin):
                 ),
 
                 data=file,
-
+                query=query,
             )
 
             for _, file in matches[:limit]

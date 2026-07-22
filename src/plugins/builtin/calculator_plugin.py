@@ -55,6 +55,7 @@ class CalculatorPlugin(Plugin):
                 subtitle=query,
                 icon=None,
                 data=result,
+                query=query,
             )
         ]
 
