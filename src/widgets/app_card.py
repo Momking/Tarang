@@ -1,5 +1,7 @@
 from gi.repository import Gtk, GObject
 
+from services.highlight_service import HighlightService
+
 
 class AppCard(Gtk.Button):
 
@@ -44,9 +46,19 @@ class AppCard(Gtk.Button):
 
     def set_result(self, result):
         self.result = result
-        print(result)
 
-        self.label.set_text(result.result.title)
+        self.label.set_use_markup(True)
+
+        self.label.set_markup(
+
+            HighlightService.markup(
+                result.result.title,
+                result.result.query,
+            )
+
+        )
+
+        # self.label.set_text(result.result.title)
 
         if result.result.icon is not None:
             self.image.set_from_gicon(result.result.icon)
