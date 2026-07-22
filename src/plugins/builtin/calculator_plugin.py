@@ -11,7 +11,7 @@ PATTERN = re.compile(
 class CalculatorPlugin(Plugin):
 
     name = "calculator"
-    
+
     description = "Evaluate mathematical expressions"
 
     author = "Nishant"
@@ -19,6 +19,13 @@ class CalculatorPlugin(Plugin):
     version = "1.0.0"
 
     priority = 200
+
+    def __init__(
+            self,
+            container,
+        ):
+
+        pass
 
     def search(
         self,

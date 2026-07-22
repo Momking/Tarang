@@ -1,6 +1,8 @@
 from plugins.plugin import Plugin
 
 from models.search_result import SearchResult
+from services.application_service import ApplicationService
+from services.usage_service import UsageService
 
 
 class ApplicationPlugin(Plugin):
@@ -9,16 +11,23 @@ class ApplicationPlugin(Plugin):
 
     description = "Search installed desktop applications"
 
+    author = "Nishant"
+
+    version = "1.0.0"
+
     priority = 100
 
     def __init__(
         self,
-        application_service,
-        usage_service,
+        container,
     ):
 
-        self.apps = application_service
-        self.usage = usage_service
+        self.apps = container.resolve(
+                    ApplicationService,
+                )
+        self.usage = container.resolve(
+                    UsageService,
+                )
         self._cache = self.apps.load()
 
     def search(

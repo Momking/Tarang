@@ -12,6 +12,7 @@ from widgets.app_grid import AppGrid
 from wayland.layer_shell import setup as setup_layer_shell
 
 from services.file_index_service import FileIndexService
+from core.container import Container
 
 
 class LauncherWindow(Gtk.ApplicationWindow):
@@ -28,14 +29,25 @@ class LauncherWindow(Gtk.ApplicationWindow):
         setup_layer_shell(self)
 
         # Create services
-        self.usage_service = UsageService()
-        self.application_service = ApplicationService()
-        self.file_index_service = FileIndexService()
+        self.container = Container()
+
+        self.container.register(
+            UsageService,
+            UsageService(),
+        )
+
+        self.container.register(
+            ApplicationService,
+            ApplicationService(),
+        )
+
+        self.container.register(
+            FileIndexService,
+            FileIndexService(),
+        )
 
         self.plugin_manager = PluginManager(
-            self.application_service,
-            self.usage_service,
-            self.file_index_service,
+            self.container,
         )
 
         # Create Widgets

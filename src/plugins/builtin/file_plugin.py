@@ -3,6 +3,7 @@ from gi.repository import Gio
 from plugins.plugin import Plugin
 
 from models.search_result import SearchResult
+from services.file_index_service import FileIndexService
 
 
 class FilePlugin(Plugin):
@@ -19,9 +20,11 @@ class FilePlugin(Plugin):
 
     def __init__(
         self,
-        index,
+        container,
     ):
-        self.index = index
+        self.index = container.resolve(
+                    FileIndexService,
+                )
 
     def search(
         self,

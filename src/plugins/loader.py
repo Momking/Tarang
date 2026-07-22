@@ -9,21 +9,20 @@ class PluginLoader:
 
     def load(
         self,
-        application_service,
-        usage_service,
-        file_index_service,
+        container,
     ):
 
         settings = PluginSettings().load()
 
         candidates = [
             ApplicationPlugin(
-                application_service,
-                usage_service,
+                container,
             ),
-            CalculatorPlugin(),
+            CalculatorPlugin(
+                container,
+            ),
             FilePlugin(
-                file_index_service,
+                container,
             ),
         ]
 

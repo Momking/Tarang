@@ -7,16 +7,13 @@ class PluginManager:
 
     def __init__(
         self,
-        application_service,
-        usage_service,
-        file_index_service,
+        container,
     ):
+        self.container = container
         loader = PluginLoader()
 
         self.plugins = loader.load(
-            application_service,
-            usage_service,
-            file_index_service,
+            self.container,
         )
 
     def register(
