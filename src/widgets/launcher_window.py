@@ -3,6 +3,7 @@ from gi.repository import Gtk, GLib
 from services.application_service import ApplicationService
 from services.usage_service import UsageService
 from services.clipboard_service import ClipboardService
+from services.icon_cache import IconCache
 
 
 from controllers.search_controller import SearchController
@@ -51,6 +52,11 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.container.register(
             ClipboardService,
             ClipboardService(),
+        )
+
+        self.container.register(
+            IconCache,
+            IconCache(),
         )
 
         self.plugin_manager = PluginManager(
