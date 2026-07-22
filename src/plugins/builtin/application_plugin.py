@@ -3,6 +3,7 @@ from plugins.plugin import Plugin
 from models.search_result import SearchResult
 from services.application_service import ApplicationService
 from services.usage_service import UsageService
+from services.fuzzy_matcher import FuzzyMatcher
 
 
 class ApplicationPlugin(Plugin):
@@ -38,69 +39,40 @@ class ApplicationPlugin(Plugin):
 
         query = query.casefold().strip()
 
-        apps = self._cache
+        matches = []
 
-        if not query:
-            matches = apps
+        for app in self._cache:
 
-        else:
+            if query:
+                match = FuzzyMatcher.match(query, app.name)
 
-            matches = [
+                if not match.matched:
+                    continue
 
-                app
+                score = match.score
+            else:
+                score = 0
 
-                for app in apps
+            score += self.usage.score(
+                app.app_info.get_id()
+            )
 
-                if query in app.name.casefold()
-
-            ]
+            matches.append((app, score))
 
         matches.sort(
-            key=lambda app: self.score(
-                app,
-                query,
-            ),
+            key=lambda item: item[1],
             reverse=True,
         )
 
         return [
-
             SearchResult(
-
                 title=app.name,
-
                 subtitle=app.executable,
-
                 icon=app.icon,
-
                 data=app,
-
             )
-
-            for app in matches[:limit]
+            for app, _ in matches[:limit]
         ]
-
-    def score(
-        self,
-        app,
-        query,
-    ):
-
-        score = 0
-
-        name = app.name.casefold()
-
-        if name.startswith(query):
-            score += 100
-
-        elif query in name:
-            score += 50
-
-        score += self.usage.score(
-            app.app_info.get_id()
-        )
-
-        return score
 
     def activate(
         self,

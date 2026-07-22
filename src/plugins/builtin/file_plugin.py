@@ -4,6 +4,7 @@ from plugins.plugin import Plugin
 
 from models.search_result import SearchResult
 from services.file_index_service import FileIndexService
+from services.fuzzy_matcher import FuzzyMatcher
 
 
 class FilePlugin(Plugin):
@@ -26,17 +27,29 @@ class FilePlugin(Plugin):
                     FileIndexService,
                 )
 
-    def search(
-        self,
-        query,
-        limit,
-    ):
 
-        files = self.index.search(
-            query,
-            limit,
+    def search(self, query, limit):
+
+        matches = []
+
+        for file in self.index.all_files():
+
+            match = FuzzyMatcher.match(
+                query,
+                file.name,
+            )
+
+            if not match.matched:
+                continue
+
+            matches.append(
+                (match.score, file)
+            )
+
+        matches.sort(
+            key=lambda x: x[0],
+            reverse=True,
         )
-
 
         return [
 
@@ -46,7 +59,7 @@ class FilePlugin(Plugin):
 
                 subtitle=str(file.path),
 
-                icon = Gio.File.new_for_path(
+                icon=Gio.File.new_for_path(
                     str(file.path)
                 ).query_info(
                     "standard::icon",
@@ -54,11 +67,11 @@ class FilePlugin(Plugin):
                     None,
                 ).get_icon(),
 
-                data=file,
+                    data=file,
 
             )
 
-            for file in files
+            for _, file in matches[:limit]
 
         ]
 

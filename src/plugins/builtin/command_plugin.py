@@ -5,6 +5,7 @@ import subprocess
 from models.search_result import SearchResult
 from plugins.plugin import Plugin
 from models.command import Command
+from services.fuzzy_matcher import FuzzyMatcher
 
 
 
@@ -59,12 +60,17 @@ class CommandPlugin(Plugin):
         results = []
 
         for command in self.commands:
-            score = self.score(query, command)
+            match = FuzzyMatcher.match(
+                query,
+                command.name,
+            )
 
-            if score == 0:
+            if not match.matched:
                 continue
 
-            results.append((score, command))
+            results.append(
+                (match.score, command)
+            )
 
         results.sort(
             key=lambda x: x[0],
@@ -80,24 +86,6 @@ class CommandPlugin(Plugin):
             )
             for _, command in results[:limit]
         ]
-
-    @staticmethod
-    def score(query: str, command: Command) -> int:
-
-        query = query.lower()
-
-        name = command.name.lower()
-
-        if name == query:
-            return 1000
-
-        if name.startswith(query):
-            return 800
-
-        if query in name:
-            return 500
-
-        return 0
 
     def activate(self, result):
 

@@ -61,47 +61,8 @@ class FileIndexService:
 
                 )
 
-    def search(
-        self,
-        query: str,
-        limit: int,
-    ) -> list[FileInfo]:
-
-        query = query.lower()
-
-        if not query:
-            return []
-
-        results = []
-
-        for file in self.files:
-
-            name = file.name.lower()
-
-            if query not in name:
-                continue
-
-            score = self.score(
-                query,
-                name,
-            )
-
-            results.append(
-                (
-                    score,
-                    file,
-                )
-            )
-
-        results.sort(
-            reverse=True,
-            key=lambda item: item[0],
-        )
-
-        return [
-            file
-            for _, file in results[:limit]
-        ]
+    def all_files(self):
+        return self.files
 
     @staticmethod
     def score(

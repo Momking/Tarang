@@ -3,6 +3,7 @@ from gi.repository import Gio
 from services.clipboard_service import ClipboardService
 from models.search_result import SearchResult
 from plugins.plugin import Plugin
+from services.fuzzy_matcher import FuzzyMatcher
 
 
 
@@ -28,28 +29,56 @@ class ClipboardPlugin(Plugin):
             ClipboardService,
         )
 
-    def search(self, query, limit):
-
-        items = self.clipboard.search(query)
-
-        return [
-
-            SearchResult(
-
-                title = item.text.replace("\n", " ") 
-                if len(item.text) > self.MAX_PREVIEW
-                else item.text[:self.MAX_PREVIEW - 1] + "…",
-
-                subtitle=str(item.timestamp),
-
-                icon = Gio.ThemedIcon.new("clipboard"),
-
-                data=item,
-
+    
+    def search(
+        self,
+        query,
+        limit,
+    ):
+    
+        matches = []
+    
+        for item in self.clipboard.items():
+    
+            match = FuzzyMatcher.match(
+                query,
+                item.text,
             )
-
-            for item in items
-
+    
+            if not match.matched:
+                continue
+    
+            matches.append(
+                (match.score, item)
+            )
+    
+        matches.sort(
+            key=lambda x: x[0],
+            reverse=True,
+        )
+    
+        return [
+    
+            SearchResult(
+    
+                title=(
+                    item.text[: self.MAX_PREVIEW]
+                    if len(item.text) <= self.MAX_PREVIEW
+                    else item.text[: self.MAX_PREVIEW - 1] + "…"
+                ).replace("\n", " "),
+    
+                subtitle=str(item.timestamp),
+    
+                icon=Gio.ThemedIcon.new(
+                    "edit-paste"
+                ),
+    
+                data=item,
+    
+            )
+    
+            for _, item in matches[:limit]
+    
         ]
 
     def activate(
