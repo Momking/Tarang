@@ -129,7 +129,7 @@ class LauncherWindow(Gtk.ApplicationWindow):
         shortcut = Gtk.Shortcut.new(
             Gtk.ShortcutTrigger.parse_string("Escape"),
             Gtk.CallbackAction.new(
-                lambda *_: self.close()
+                lambda *_: self.get_application().quit()
             ),
         )
 
@@ -149,4 +149,4 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         self.controller.activate(result)
 
-        self.close()
+        self.get_application().quit()
