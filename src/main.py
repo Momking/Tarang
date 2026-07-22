@@ -1,14 +1,10 @@
 import gi
-
-gi.require_version("Gtk", "4.0")
-
 from gi.repository import Gtk
-
-from widgets.launcher_window import LauncherWindow
-
 from pathlib import Path
 
+from widgets.launcher_window import LauncherWindow
 from services.theme_service import ThemeService
+gi.require_version("Gtk", "4.0")
 
 class LauncherApplication(Gtk.Application):
     def __init__(self):
