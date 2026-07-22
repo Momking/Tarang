@@ -1,9 +1,6 @@
-from plugins.application_plugin import ApplicationPlugin
-from plugins.calculator import CalculatorPlugin
 from models.plugin_result import PluginResult
-from services.file_index_service import FileIndexService
 
-from plugins.file_plugin import FilePlugin
+from plugins.loader import PluginLoader
 
 
 class PluginManager:
@@ -12,28 +9,14 @@ class PluginManager:
         self,
         application_service,
         usage_service,
+        file_index_service,
     ):
-        self.plugins = []
+        loader = PluginLoader()
 
-        self.register(
-            ApplicationPlugin(
-                application_service,
-                usage_service,
-            )
-        )
-
-        self.register(
-            CalculatorPlugin()
-        )
-
-        self.file_index = FileIndexService()
-        
-        self.register(
-        
-            FilePlugin(
-                self.file_index,
-            )
-        
+        self.plugins = loader.load(
+            application_service,
+            usage_service,
+            file_index_service,
         )
 
     def register(

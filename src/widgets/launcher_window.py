@@ -11,6 +11,8 @@ from widgets.search_bar import SearchBar
 from widgets.app_grid import AppGrid
 from wayland.layer_shell import setup as setup_layer_shell
 
+from services.file_index_service import FileIndexService
+
 
 class LauncherWindow(Gtk.ApplicationWindow):
 
@@ -28,10 +30,12 @@ class LauncherWindow(Gtk.ApplicationWindow):
         # Create services
         self.usage_service = UsageService()
         self.application_service = ApplicationService()
+        self.file_index_service = FileIndexService()
 
         self.plugin_manager = PluginManager(
             self.application_service,
             self.usage_service,
+            self.file_index_service,
         )
 
         # Create Widgets
