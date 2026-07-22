@@ -13,3 +13,5 @@ class SearchResult:
     icon: Gio.Icon | None
 
     data: object
+
+    query: str
