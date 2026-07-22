@@ -2,6 +2,7 @@ from plugins.builtin.application_plugin import ApplicationPlugin
 from plugins.builtin.calculator_plugin import CalculatorPlugin
 from plugins.builtin.file_plugin import FilePlugin
 from plugins.builtin.clipboard_plugin import ClipboardPlugin
+from plugins.builtin.command_plugin import CommandPlugin
 
 from plugins.plugin import Plugin
 from plugins.plugin_settings import PluginSettings
@@ -14,7 +15,7 @@ class PluginLoader:
         container,
     ):
 
-        settings = PluginSettings().load()
+        settings = PluginSettings()
 
         candidates = [
             ApplicationPlugin(
@@ -29,12 +30,15 @@ class PluginLoader:
             ClipboardPlugin(
                 container,
             ),
+            CommandPlugin(
+                container,
+            ),
         ]
 
         return [
             self.validate(plugin)
             for plugin in candidates
-            if settings.get(plugin.name, True)
+            if settings.enabled(plugin.name)
         ]
 
     @staticmethod
