@@ -6,6 +6,7 @@ from models.search_result import SearchResult
 from plugins.plugin import Plugin
 from models.command import Command
 from services.fuzzy_matcher import FuzzyMatcher
+from services.icon_cache import IconCache
 
 
 
@@ -22,35 +23,40 @@ class CommandPlugin(Plugin):
     priority = 100
 
     def __init__(self, container):
+
+        self.icons = container.resolve(
+            IconCache,
+        )
+
         self.commands = [
             Command(
                 name="Shutdown",
                 description="Power off the system",
-                icon=Gio.ThemedIcon.new("system-shutdown"),
+                icon=self.icons.themed("system-shutdown"),
                 callback=self.shutdown,
             ),
             Command(
                 name="Reboot",
                 description="Restart the system",
-                icon=Gio.ThemedIcon.new("system-reboot"),
+                icon=self.icons.themed("system-reboot"),
                 callback=self.reboot,
             ),
             Command(
                 name="Suspend",
                 description="Suspend the system",
-                icon=Gio.ThemedIcon.new("system-suspend"),
+                icon=self.icons.themed("system-suspend"),
                 callback=self.suspend,
             ),
             Command(
                 name="Logout",
                 description="Logout the system",
-                icon=Gio.ThemedIcon.new("system-logout"),
+                icon=self.icons.themed("system-logout"),
                 callback=self.logout,
             ),
             Command(
                 name="Lock",
                 description="Lock the system",
-                icon=Gio.ThemedIcon.new("system-lock"),
+                icon=self.icons.themed("system-lock"),
                 callback=self.lock,
             ),
         ]

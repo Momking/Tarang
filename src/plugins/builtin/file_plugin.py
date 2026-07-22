@@ -5,6 +5,7 @@ from plugins.plugin import Plugin
 from models.search_result import SearchResult
 from services.file_index_service import FileIndexService
 from services.fuzzy_matcher import FuzzyMatcher
+from services.icon_cache import IconCache
 
 
 class FilePlugin(Plugin):
@@ -24,8 +25,12 @@ class FilePlugin(Plugin):
         container,
     ):
         self.index = container.resolve(
-                    FileIndexService,
-                )
+            FileIndexService,
+        )
+
+        self.icons = container.resolve(
+            IconCache,
+        )
 
 
     def search(self, query, limit):
@@ -59,15 +64,11 @@ class FilePlugin(Plugin):
 
                 subtitle=str(file.path),
 
-                icon=Gio.File.new_for_path(
-                    str(file.path)
-                ).query_info(
-                    "standard::icon",
-                    Gio.FileQueryInfoFlags.NONE,
-                    None,
-                ).get_icon(),
+                icon=self.icons.file_icon(
+                    file.path,
+                ),
 
-                    data=file,
+                data=file,
 
             )
 

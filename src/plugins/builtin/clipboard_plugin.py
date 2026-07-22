@@ -4,7 +4,7 @@ from services.clipboard_service import ClipboardService
 from models.search_result import SearchResult
 from plugins.plugin import Plugin
 from services.fuzzy_matcher import FuzzyMatcher
-
+from services.icon_cache import IconCache
 
 
 class ClipboardPlugin(Plugin):
@@ -27,6 +27,10 @@ class ClipboardPlugin(Plugin):
     ):
         self.clipboard = container.resolve(
             ClipboardService,
+        )
+
+        self.icons = container.resolve(
+            IconCache,
         )
 
     
@@ -69,7 +73,7 @@ class ClipboardPlugin(Plugin):
     
                 subtitle=str(item.timestamp),
     
-                icon=Gio.ThemedIcon.new(
+                icon=self.icons.themed(
                     "edit-paste"
                 ),
     
