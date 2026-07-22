@@ -2,6 +2,8 @@ from gi.repository import Gtk, GLib
 
 from services.application_service import ApplicationService
 from services.usage_service import UsageService
+from services.clipboard_service import ClipboardService
+
 
 from controllers.search_controller import SearchController
 
@@ -44,6 +46,11 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.container.register(
             FileIndexService,
             FileIndexService(),
+        )
+
+        self.container.register(
+            ClipboardService,
+            ClipboardService(),
         )
 
         self.plugin_manager = PluginManager(
