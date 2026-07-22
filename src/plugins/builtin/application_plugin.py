@@ -15,7 +15,7 @@ class ApplicationPlugin(Plugin):
 
     version = "1.0.0"
 
-    priority = 100
+    priority = 200
 
     def __init__(
         self,
