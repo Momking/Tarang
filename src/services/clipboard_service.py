@@ -1,94 +1,245 @@
-import sys
+from __future__ import annotations
+
 import json
-from gi.repository import Gdk
+import time
+from collections import deque
+from pathlib import Path
+
+from gi.repository import Gdk, GLib
+
+from models.clipboard_item import ClipboardItem
+
 
 class ClipboardService:
 
     MAX_HISTORY = 100
 
-    CLIPBOARD_FILE = "~/.local/share/tarang/clipboard.json"
-    
+    SAVE_DELAY_MS = 1000
+
+    MAX_TEXT_SIZE = 1024 * 1024  # 1 MiB
+
+    CLIPBOARD_FILE = (
+        Path.home()
+        / ".local"
+        / "share"
+        / "tarang"
+        / "clipboard.json"
+    )
+
     def __init__(self):
 
-        self.history = []
+        self.history = deque(maxlen=self.MAX_HISTORY)
 
-        display = Gdk.Display.get_default()
+        self._save_source = None
 
-        clipboard = display.get_clipboard()
+        self.display = Gdk.Display.get_default()
+        self.clipboard = self.display.get_clipboard()
 
-        self.start()
+        self.ensure_storage()
+        self.load()
 
-        clipboard.connect(
+        self.clipboard.connect(
             "changed",
             self.on_changed,
         )
 
-    def start(self):
-        with open(self.CLIPBOARD_FILE, "r") as f:
-            self.history = json.load(f)
-
-    def copy(self, text):
-        self.history.append(text)
-        self.history = self.history[:self.MAX_HISTORY]
-
-        with open(self.CLIPBOARD_FILE, "w") as f:
-            json.dump(self.history, f)
-
-    def search(self, query):
-
-        query = query.lower()
-
-        if not query:
-            return []
-
-        results = []
-
-        for item in self.history:
-
-            word = item.text.lower()
-
-            if query not in word:
-                continue
-
-            score = self.score(
-                query,
-                item,
+    def ensure_storage(self) -> None:
+            self.CLIPBOARD_FILE.parent.mkdir(
+                parents=True,
+                exist_ok=True,
             )
 
-            results.append(
-                (
-                    score,
-                    item,
-                )
+            if not self.CLIPBOARD_FILE.exists():
+                self.CLIPBOARD_FILE.write_text("[]")
+
+    def load(self):
+
+        if not self.CLIPBOARD_FILE.exists():
+            return
+
+        try:
+            with self.CLIPBOARD_FILE.open() as f:
+                data = json.load(f)
+
+        except json.JSONDecodeError:
+            self.CLIPBOARD_FILE.write_text("[]")
+            return
+
+        except OSError:
+            return
+
+        for item in data:
+            self.history.append(
+                ClipboardItem(**item)
             )
 
-        results.sort(
-            reverse=True,
-            key=lambda item: item[0],
+    def save(self):
+
+        self.CLIPBOARD_FILE.parent.mkdir(
+            parents=True,
+            exist_ok=True,
         )
 
-        return [
-            item
-            for _, item in results[:self.MAX_HISTORY]
-        ]
+        with self.CLIPBOARD_FILE.open("w") as f:
+
+            json.dump(
+                [
+                    {
+                        "text": item.text,
+                        "timestamp": item.timestamp,
+                    }
+                    for item in self.history
+                ],
+                f,
+                indent=2,
+            )
+
+    def schedule_save(self):
+
+        if self._save_source:
+
+            GLib.source_remove(
+                self._save_source
+            )
+
+        self._save_source = GLib.timeout_add(
+            self.SAVE_DELAY_MS,
+            self._save,
+        )
+
+
+    def _save(self):
+
+        self.save()
+
+        self._save_source = None
+
+        return False
+
+    def add_item(
+        self,
+        text: str,
+    ):
+
+        text = text.strip()
+
+        if not text:
+            return
+
+        if len(text.encode("utf-8")) > self.MAX_TEXT_SIZE:
+            return
+
+        self.history = deque(
+            (
+                item
+                for item in self.history
+                if item.text != text
+            ),
+            maxlen=self.MAX_HISTORY,
+        )
+
+        self.history.appendleft(
+
+            ClipboardItem(
+                text=text,
+                timestamp=time.time(),
+            )
+
+        )
+
+        self.schedule_save()
+
+    def copy(
+        self,
+        text: str,
+    ):
+
+        self.clipboard.set(text)
+
+        self.add_item(text)
+
+    def on_changed(
+        self,
+        clipboard,
+    ):
+
+        clipboard.read_text_async(
+            None,
+            self.on_text_received,
+        )
+
+    def on_text_received(
+        self,
+        clipboard,
+        result,
+    ):
+
+        try:
+
+            text = clipboard.read_text_finish(result)
+
+        except Exception:
+
+            return
+
+        if text:
+
+            self.add_item(text)
 
     @staticmethod
     def score(
         query,
-        item,
+        text,
     ):
-        word = item.text.lower()
 
-        if word == query:
-            return sys.maxsize
+        text = text.lower()
 
-        if word.startswith(query):
-            return item.timestamp
+        query = query.lower()
 
-        if query in word:
+        if text == query:
+            return 1000
+
+        if text.startswith(query):
+            return 800
+
+        if query in text:
             return 500
 
         return 0
 
-    def on_changed(self):
-        pass
+    def search(
+        self,
+        query,
+    ):
+
+        if not query:
+
+            return list(self.history)
+
+        matches = []
+
+        for item in self.history:
+
+            score = self.score(
+                query,
+                item.text,
+            )
+
+            if score:
+
+                matches.append(
+                    (score, item)
+                )
+
+        matches.sort(
+            key=lambda x: (
+                x[0],
+                x[1].timestamp,
+            ),
+            reverse=True,
+        )
+
+        return [
+            item
+            for _, item in matches
+        ]

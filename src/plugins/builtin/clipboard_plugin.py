@@ -1,5 +1,4 @@
 from gi.repository import Gio
-import paperclip as pc
 
 from services.clipboard_service import ClipboardService
 from models.search_result import SearchResult
@@ -19,6 +18,8 @@ class ClipboardPlugin(Plugin):
 
     priority = 100
 
+    MAX_PREVIEW = 80
+
     def __init__(
         self,
         container,
@@ -35,17 +36,13 @@ class ClipboardPlugin(Plugin):
 
             SearchResult(
 
-                title=item.text,
+                title = item.text.replace("\n", " ") 
+                if len(item.text) > self.MAX_PREVIEW
+                else item.text[:self.MAX_PREVIEW - 1] + "…",
 
-                subtitle=str(item.text),
+                subtitle=str(item.timestamp),
 
-                icon = Gio.File.new_for_path(
-                    str(item.path)
-                ).query_info(
-                    "standard::icon",
-                    Gio.FileQueryInfoFlags.NONE,
-                    None,
-                ).get_icon(),
+                icon = Gio.ThemedIcon.new("clipboard"),
 
                 data=item,
 
@@ -60,6 +57,4 @@ class ClipboardPlugin(Plugin):
         result,
     ):
 
-        file = result.data
-
-        pc.copy(file.text)
+        self.clipboard.copy(result.data.text)
