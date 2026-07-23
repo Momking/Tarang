@@ -1,5 +1,6 @@
 from pathlib import Path
 import threading
+import json
 
 from gi.repository import Gio
 
@@ -226,3 +227,29 @@ class FileIndexService:
         if monitor:
 
             monitor.cancel()
+
+    def load_cache(self):
+    
+        if not self.CACHE_FILE.exists():
+            return
+    
+        try:
+    
+            data = json.loads(
+                self.CACHE_FILE.read_text()
+            )
+    
+        except Exception:
+            return
+    
+        with self.lock:
+    
+            self.files = [
+    
+                FileInfo.from_dict(item)
+    
+                for item in data
+    
+                if Path(item["path"]).exists()
+    
+            ]
