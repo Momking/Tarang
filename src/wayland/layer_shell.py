@@ -1,5 +1,6 @@
 import gi
 
+gi.require_version("Gtk", "4.0")
 gi.require_version("Gtk4LayerShell", "1.0")
 
 from gi.repository import Gtk4LayerShell

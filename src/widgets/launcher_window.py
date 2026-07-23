@@ -4,6 +4,7 @@ from services.application_service import ApplicationService
 from services.usage_service import UsageService
 from services.clipboard_service import ClipboardService
 from services.icon_cache import IconCache
+from services.thumbnail_service import ThumbnailService
 
 
 from controllers.search_controller import SearchController
@@ -57,6 +58,13 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.container.register(
             IconCache,
             IconCache(),
+        )
+
+        thumbnail_service = ThumbnailService()
+
+        self.container.register(
+            ThumbnailService,
+            thumbnail_service,
         )
 
         self.plugin_manager = PluginManager(
