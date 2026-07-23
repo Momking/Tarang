@@ -229,27 +229,48 @@ class FileIndexService:
             monitor.cancel()
 
     def load_cache(self):
-    
+
         if not self.CACHE_FILE.exists():
             return
-    
+
         try:
-    
+
             data = json.loads(
                 self.CACHE_FILE.read_text()
             )
-    
+
         except Exception:
             return
-    
+
         with self.lock:
-    
+
             self.files = [
-    
+
                 FileInfo.from_dict(item)
-    
+
                 for item in data
-    
+
                 if Path(item["path"]).exists()
-    
+
             ]
+
+    def save_cache(self):
+
+        self.CACHE_FILE.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        with self.lock:
+
+            data = [
+                file.to_dict()
+                for file in self.files
+            ]
+
+        self.CACHE_FILE.write_text(
+            json.dumps(
+                data,
+                indent=4,
+            )
+        )
