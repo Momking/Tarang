@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-
-from gi.repository import Gio
+from gi.repository import Gdk
 
 
 @dataclass(slots=True)
@@ -10,7 +9,7 @@ class SearchResult:
 
     subtitle: str
 
-    icon: Gio.Icon | None
+    paintable: Gdk.Paintable | None
 
     data: object
 
