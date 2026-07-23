@@ -15,6 +15,13 @@ class FileIndexService:
         Path.home() / "Projects",
     )
 
+    CACHE_FILE = (
+        Path.home()
+        / ".cache"
+        / "tarang"
+        / "files.json"
+    )
+
     IGNORE = {
         ".git",
         "__pycache__",
