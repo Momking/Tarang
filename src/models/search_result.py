@@ -14,3 +14,5 @@ class SearchResult:
     data: object
 
     query: str
+
+    score: int = 0
