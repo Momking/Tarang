@@ -36,7 +36,7 @@ class PluginManager:
             results.extend(
                 PluginResult(
                     plugin=plugin,
-                    result=result,
+                    search_result=result,
                 )
                 for result in plugin_results
             )
@@ -49,6 +49,6 @@ class PluginManager:
     ):
 
         plugin = result.plugin
-        result = result.result
+        result = result.search_result
 
         plugin.activate(result)
