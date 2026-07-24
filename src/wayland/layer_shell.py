@@ -19,10 +19,16 @@ def setup(window):
         Gtk4LayerShell.KeyboardMode.ON_DEMAND,
     )
 
-    Gtk4LayerShell.set_anchor(
+    Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.TOP, True)
+    Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.LEFT, False)
+    Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.RIGHT, False)
+    Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.BOTTOM, False)
+
+    Gtk4LayerShell.set_margin(
         window,
         Gtk4LayerShell.Edge.TOP,
-        True,
+        180,
     )
+
 
     Gtk4LayerShell.set_namespace(window, "tarang")
