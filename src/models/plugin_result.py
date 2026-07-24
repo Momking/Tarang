@@ -12,4 +12,4 @@ if TYPE_CHECKING:
 @dataclass(slots=True)
 class PluginResult:
     plugin: Plugin
-    result: SearchResult
+    search_result: SearchResult

@@ -1,17 +1,19 @@
 from dataclasses import dataclass
 from gi.repository import Gdk
+from typing import TypeVar, Generic
 
+T = TypeVar("T")
 
 @dataclass(slots=True)
-class SearchResult:
+class SearchResult(Generic[T]):
 
     title: str
 
     subtitle: str
 
-    paintable: Gdk.Paintable | None
+    icon: Gdk.Paintable | None
 
-    data: object
+    data: T
 
     query: str
 
