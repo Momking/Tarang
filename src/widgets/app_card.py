@@ -10,9 +10,7 @@ class AppCard(Gtk.Button):
 
         self.result = None
 
-        self.set_has_frame(False)
-
-        self.add_css_class("app-card")
+        # self.set_has_frame(False)
 
         self.box = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
@@ -20,7 +18,7 @@ class AppCard(Gtk.Button):
         )
 
         self.image = Gtk.Image()
-        self.image.set_pixel_size(64)
+        # self.image.set_pixel_size(64)
 
         self.label = Gtk.Label()
         self.label.set_wrap(True)
@@ -32,6 +30,14 @@ class AppCard(Gtk.Button):
         self.box.append(self.label)
 
         self.set_child(self.box)
+
+        self.set_focusable(False)
+
+        self.add_css_class("app-card")
+
+        self.image.add_css_class("icon")
+
+        self.label.add_css_class("title")
 
     def set_result(self, result):
         self.result = result
@@ -59,12 +65,3 @@ class AppCard(Gtk.Button):
 
         if result.search_result.icon is not None:
             self.image.set_from_gicon(result.search_result.icon)
-
-    def set_selected(
-        self,
-        selected,
-    ):
-        if selected:
-            self.add_css_class("selected")
-        else:
-            self.remove_css_class("selected")

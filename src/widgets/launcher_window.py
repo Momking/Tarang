@@ -1,4 +1,4 @@
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Gdk
 
 from services.application_service import ApplicationService
 from services.usage_service import UsageService
@@ -17,6 +17,7 @@ from wayland.layer_shell import setup as setup_layer_shell
 
 from services.file_index_service import FileIndexService
 from core.container import Container
+from models.mode import FocusMode
 
 
 class LauncherWindow(Gtk.ApplicationWindow):
@@ -34,6 +35,8 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         # Create services
         self.container = Container()
+
+        self.mode = FocusMode.SEARCH
 
         self.container.register(
             UsageService,
@@ -85,6 +88,11 @@ class LauncherWindow(Gtk.ApplicationWindow):
             self.on_app_activated,
         )
 
+        self.grid.connect(
+            "focus-search",
+            lambda *_: self.search.grab_focus(),
+        )
+
         # Connect signals
         self.search.connect(
             "search-changed",
@@ -100,14 +108,17 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         self.search.connect(
             "move-next",
-            lambda *_:
-                self.controller.move_next(),
+            lambda *_: self.controller.move_next(),
         )
 
         self.search.connect(
             "move-previous",
-            lambda *_:
-                self.controller.move_previous(),
+            lambda *_: self.controller.move_previous(),
+        )
+
+        self.search.connect(
+            "focus-out",
+            lambda *_: self.focus_results(),
         )
 
         self.controller.initialize()
@@ -128,7 +139,7 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         content.add_css_class("launcher")
 
-        content.set_size_request(900, 700)
+        content.set_size_request(800, 700)
 
         content.append(self.search)
         content.append(self.grid)
@@ -137,8 +148,16 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         self.set_child(outer)
 
+        # Key press controller
+        controller_event = Gtk.EventControllerKey()
+        controller_event.connect(
+            "key-pressed",
+            self.on_key_pressed,
+        )
+        self.add_controller(controller_event)
+
         # Search entry focus
-        controller = Gtk.ShortcutController()
+        controller_search = Gtk.ShortcutController()
 
         shortcut = Gtk.Shortcut.new(
             Gtk.ShortcutTrigger.parse_string("Escape"),
@@ -147,13 +166,9 @@ class LauncherWindow(Gtk.ApplicationWindow):
             ),
         )
 
-        controller.add_shortcut(shortcut)
+        controller_search.add_shortcut(shortcut)
 
-        self.search.add_controller(controller)
-
-        GLib.idle_add(
-            self.search.grab_focus
-        )
+        self.search.add_controller(controller_search)
 
     def on_app_activated(
         self,
@@ -164,3 +179,34 @@ class LauncherWindow(Gtk.ApplicationWindow):
         self.controller.activate(result)
 
         self.get_application().quit()
+
+    def focus_results(self):
+
+        if self.grid.has_results():
+            self.grid.focus_grid()
+
+    def focus_search(self):
+
+        self.search.grab_focus()
+
+    def on_key_pressed(
+        self,
+        controller,
+        keyval,
+        keycode,
+        state,
+    ):
+        print("key name: ", Gdk.keyval_name(keyval))
+
+        if keyval == Gdk.KEY_Tab:
+
+            if self.mode == FocusMode.SEARCH:
+                self.mode = FocusMode.RESULTS
+                self.focus_results()
+            else:
+                self.mode = FocusMode.SEARCH
+                self.focus_search()
+
+            return True
+
+        return False
