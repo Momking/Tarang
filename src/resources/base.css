@@ -1,17 +1,70 @@
 window {
-    background: transparent;
+    background-color: transparent;
 }
 
 .launcher {
+    padding: 24px;
 
-    border-radius:24px;
+    border-radius: 18px;
 
-    padding:20px;
+    background: rgba(130,30,30,0.82);
 
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(255,255,255,0.08);
+}
+
+searchentry {
+    min-height: 48px;
+
+    padding: 0 16px;
+
+    border-radius: 14px;
+
+    font-size: 18px;
+}
+
+.app-card {
+    min-width: 30px;
+    min-height: 40px;
+
+    padding: 14px;
+
+    border-radius: 14px;
+    background-color: transparent;
+    background-image: none;
+    border: none;
+}
+
+.activatable {
+    background-color: transparent;
+    border-radius: 18px;
 }
 
 .app-card.selected {
-    background: alpha(@accent_color, 0.15);
-    border: 2px solid @accent_color;
-    border-radius: 12px;
+    background-color: #0a4239
+}
+
+.app-card:hover {
+    background-color: #0a4239;
+}
+
+.icon {
+    -gtk-icon-size: 24px;
+}
+
+.title {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.results {
+    background-color: transparent;
+    padding: 20px;
+}
+
+.search-bar {
+    background-color: transparent;
+    padding: 10px;
+    border-radius: 28px;
 }
