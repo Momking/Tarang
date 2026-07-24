@@ -5,16 +5,10 @@ from services.highlight_service import HighlightService
 
 class AppCard(Gtk.Button):
 
-    __gsignals__ = {
-            "activated": (
-                GObject.SignalFlags.RUN_FIRST,
-                None,
-                (),
-            ),
-        }
-
     def __init__(self):
         super().__init__()
+
+        self.result = None
 
         self.set_has_frame(False)
 
@@ -37,38 +31,34 @@ class AppCard(Gtk.Button):
         self.box.append(self.image)
         self.box.append(self.label)
 
-        self.connect(
-            "clicked",
-            self.on_clicked,
-        )
-
         self.set_child(self.box)
 
     def set_result(self, result):
         self.result = result
+
+        # Widget is being recycled
+        if result is None:
+
+            self.label.set_text("")
+            self.image.clear()
+
+            return
 
         self.label.set_use_markup(True)
 
         self.label.set_markup(
 
             HighlightService.markup(
-                result.result.title,
-                result.result.query,
+                result.search_result.title,
+                result.search_result.query,
             )
 
         )
 
         # self.label.set_text(result.result.title)
 
-        if result.result.icon is not None:
-            self.image.set_from_gicon(result.result.icon)
-
-    def on_clicked(self, button):
-
-        if self.result is None:
-            return
-
-        self.emit("activated")
+        if result.search_result.icon is not None:
+            self.image.set_from_gicon(result.search_result.icon)
 
     def set_selected(
         self,
