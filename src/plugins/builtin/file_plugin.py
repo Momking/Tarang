@@ -60,7 +60,7 @@ class FilePlugin(Plugin):
 
             SearchResult(
 
-                title=file.name,
+                title=file.name[:10],
 
                 subtitle=str(file.path),
 
