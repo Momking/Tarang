@@ -1,104 +1,99 @@
 # Tarang Launcher
 
-<div align="center">
+> A fast, extensible Wayland application launcher written in Python using GTK4 and Layer Shell.
 
-**A modern, extensible application launcher for Wayland desktops built with GTK4 and Python.**
+Tarang is a modern launcher designed around a plugin architecture. Instead of hardcoding application search, clipboard history, files, or other sources, every search provider is implemented as a plugin.
 
-*Fast. Plugin-driven. Designed for Linux power users.*
+The project aims to be:
 
-![Python](https://img.shields.io/badge/Python-3.13+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![GTK4](https://img.shields.io/badge/GTK4-4.x-7FE719?style=for-the-badge&logo=gtk&logoColor=black)
-![Wayland](https://img.shields.io/badge/Wayland-Native-blue?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
-
-</div>
-
----
-
-## Overview
-
-Tarang is a **Wayland-native launcher** focused on speed, extensibility, and clean architecture.
-
-Unlike traditional launchers that only search installed applications, Tarang provides a unified search experience through a plugin system capable of searching:
-
-- Applications
-- Files
-- Clipboard history
-- Commands
-- Future plugins
-
-The project is built around a service-oriented architecture, making it easy to extend without modifying the core launcher.
+- ⚡ Fast and responsive
+- 🧩 Easily extensible
+- 🎨 Fully themeable with CSS
+- 🐧 Native Wayland application
+- 🏗 Clean architecture suitable for contributors
 
 ---
 
-## Features
+# Features
 
-### Current
-
-- Wayland native (GTK4 + Layer Shell)
-- Plugin-based search architecture
-- Fuzzy search
 - Application launcher
-- File search
-- Clipboard history
-- Command execution
-- Usage-based ranking
-- Background file indexing
-- File system monitoring
-- Persistent file index cache
+- Plugin-based search system
+- GTK4 GridView interface
+- Wayland Layer Shell support
+- Icon caching
+- Thumbnail generation
+- File indexing
+- Clipboard integration
 - Keyboard-first workflow
-- Dependency Injection container
-
-### Planned
-
-- Window switcher
-- Recent files
-- Favorites
-- Plugin SDK
-- Theme engine
-- Image thumbnails
-- PDF previews
-- Plugin marketplace
 - Calculator
-- Web search
-- Emoji picker
+- Commands
+
+Planned features:
+
+- Emoji search
+- Browser history
+- Recent documents
 - AI plugins
+- Window switcher
+- Plugin marketplace
 
 ---
 
 # Screenshots
 
-> Screenshots coming soon.
+![](/src/resources/image.png)
 
 ---
 
-# Architecture
+# Installation
 
+## Requirements
+
+- Python 3.12+
+- GTK4
+- PyGObject
+- gtk4-layer-shell
+- Wayland compositor
+
+Fedora example:
+
+```bash
+sudo dnf install \
+    python3-gobject \
+    gtk4 \
+    gtk4-layer-shell \
+    desktop-file-utils
 ```
-User
- │
- ▼
-SearchBar
- │
- ▼
-SearchController
- │
- ▼
-PluginManager
- │
- ├──────────────┐
- ▼              ▼
-Application     File
-Plugin          Plugin
- │              │
- ▼              ▼
-Services     Services
- │              │
- └──────┬───────┘
-        ▼
- Search Results
-        ▼
-     App Grid
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Momking/tarang.git
+cd tarang
+```
+
+Create a virtual environment:
+
+```bash
+python -m venv .venv
+```
+
+Activate:
+
+```bash
+source .venv/bin/activate
+```
+
+Install Python dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run:
+
+```bash
+./run.sh
 ```
 
 ---
@@ -109,160 +104,209 @@ Services     Services
 src/
 │
 ├── controllers/
-│   └── search_controller.py
-│
-├── models/
-│   ├── app_info.py
-│   ├── file_info.py
-│   ├── clipboard_item.py
-│   └── search_result.py
-│
-├── plugins/
-│   ├── manager.py
-│   ├── builtin/
-│   │   ├── application_plugin.py
-│   │   ├── file_plugin.py
-│   │   ├── clipboard_plugin.py
-│   │   └── command_plugin.py
-│
-├── services/
-│   ├── application_service.py
-│   ├── clipboard_service.py
-│   ├── command_service.py
-│   ├── file_index_service.py
-│   ├── usage_service.py
-│   └── thumbnail_service.py
-│
-├── widgets/
-│   ├── launcher_window.py
-│   ├── app_grid.py
-│   ├── app_card.py
-│   └── search_bar.py
 │
 ├── core/
-│   └── container.py
+│
+├── models/
+│
+├── plugins/
+│
+├── services/
+│
+├── widgets/
+│
+├── wayland/
 │
 └── main.py
 ```
 
 ---
 
+# Architecture
+
+Tarang follows a simple layered architecture.
+
+```
+User Input
+      │
+      ▼
+SearchBar
+      │
+      ▼
+SearchController
+      │
+      ▼
+PluginManager
+      │
+      ▼
+Plugins
+      │
+      ▼
+SearchResult
+      │
+      ▼
+AppGrid
+      │
+      ▼
+LauncherWindow
+```
+
+Responsibilities are intentionally separated:
+
+- UI widgets never search.
+- Plugins never touch GTK.
+- Controllers never know plugin implementation details.
+
+---
+
+# Components
+
+## LauncherWindow
+
+The main application window.
+
+Responsible for:
+
+- Window creation
+- Layer Shell setup
+- Keyboard shortcuts
+- Dependency registration
+- Widget layout
+
+---
+
+## SearchController
+
+Coordinates searching.
+
+Responsibilities:
+
+- Debounced searching
+- Background worker threads
+- Updating UI safely using GLib
+- Navigation
+- Activation
+
+---
+
+## PluginManager
+
+Discovers and manages plugins.
+
+Responsibilities:
+
+- Load plugins
+- Execute searches
+- Merge results
+- Activate selected result
+
+---
+
+## AppGrid
+
+Displays search results.
+
+Uses:
+
+- Gtk.GridView
+- Gtk.SingleSelection
+- Gio.ListStore
+
+Responsibilities:
+
+- Rendering results
+- Keyboard navigation
+- Selection
+- Activation
+
+---
+
+## Services
+
+Services provide reusable functionality.
+
+Current services:
+
+- ApplicationService
+- UsageService
+- ClipboardService
+- FileIndexService
+- ThumbnailService
+- IconCache
+
+Services never depend on GTK.
+
+---
+
 # Search Pipeline
 
 ```
-User Types
+User types
       │
       ▼
-Search Controller
+SearchController
       │
       ▼
-Plugin Manager
+PluginManager.search()
       │
-      ├──────────────┐
-      ▼              ▼
-Applications      Files
-Clipboard         Commands
-      │              │
-      └──────┬───────┘
-             ▼
-      Merge Results
-             ▼
-       Sort by Score
-             ▼
-         Display UI
+      ▼
+Each Plugin.search()
+      │
+      ▼
+Combined results
+      │
+      ▼
+Gtk.GridView
 ```
 
----
+Searching happens in a worker thread to keep the UI responsive.
 
-# Ranking
+UI updates are performed through:
 
-Tarang combines multiple signals to rank results.
-
-Current scoring includes:
-
-- Exact match
-- Prefix match
-- Subsequence match
-- Usage frequency
-- Recency bonus
-
----
-
-# File Indexing
-
-Unlike scanning the filesystem every search, Tarang maintains an indexed database.
-
-Startup flow:
-
+```python
+GLib.idle_add(...)
 ```
-Load cache
-
-↓
-
-Launcher usable immediately
-
-↓
-
-Background indexing
-
-↓
-
-Update cache
-```
-
-This provides instant search results while keeping the index up to date.
 
 ---
 
 # Plugin System
 
-Every search provider is implemented as a plugin.
+Each plugin implements the same interface.
 
 Example:
 
 ```python
 class Plugin:
 
-    def search(
-        self,
-        query: str,
-        limit: int,
-    ):
+    def search(self, query):
+        ...
+
+    def activate(self, result):
         ...
 ```
 
-Current plugins:
+A plugin returns a list of `SearchResult` objects.
 
-- Application Plugin
-- File Plugin
-- Clipboard Plugin
-- Command Plugin
+Example:
 
-Adding new plugins requires no changes to the launcher itself.
+```python
+SearchResult(
+    title="Firefox",
+    subtitle="Web Browser",
+    icon=icon,
+    data=desktop_file,
+)
+```
 
----
-
-# Services
-
-Services encapsulate reusable functionality.
-
-Current services include:
-
-| Service | Purpose |
-|----------|---------|
-| ApplicationService | Installed applications |
-| FileIndexService | Background file indexing |
-| ClipboardService | Clipboard history |
-| UsageService | Ranking history |
-| CommandService | Command execution |
-| ThumbnailService | File thumbnails |
-| SearchService | Fuzzy searching |
+Plugins should never import GTK widgets.
 
 ---
 
 # Dependency Injection
 
-Tarang uses a lightweight dependency injection container.
+Tarang uses a lightweight dependency container.
+
+Example:
 
 ```python
 container.register(
@@ -270,167 +314,136 @@ container.register(
     ApplicationService(),
 )
 
-service = container.resolve(
-    ApplicationService
-)
+service = container.resolve(ApplicationService)
 ```
 
-This keeps plugins loosely coupled and easy to test.
+This keeps plugins loosely coupled.
 
 ---
 
-# Caching
+# Styling
 
-Tarang stores persistent caches inside
+The entire interface is themeable using CSS.
 
-```
-~/.cache/tarang/
+Example:
+
+```css
+.launcher {
+    border-radius: 18px;
+}
+
+.app-card.selected {
+    background-color: #0a4239;
+}
 ```
 
-Current caches:
-
-```
-files.json
-```
-
-Future:
-
-```
-usage.json
-clipboard.json
-thumbnails/
-```
+No styling should be hardcoded inside widgets.
 
 ---
 
-# Performance
+# Keyboard Navigation
 
-Design goals:
+Current shortcuts:
 
-- Startup under **100 ms**
-- Incremental background indexing
-- Lazy loading
-- Memory caching
-- Non-blocking search
-- Threaded services
-- Minimal UI latency
-
----
-
-# Technologies
-
-- Python
-- GTK4
-- GObject Introspection
-- Wayland
-- Layer Shell
-- GLib
-- Gio
-- threading
-- JSON
-- Freedesktop specifications
+| Key | Action |
+|------|--------|
+| Enter | Launch selected item |
+| Tab | Toggle search/results |
+| Escape | Exit launcher |
+| ↑ ↓ | Navigate |
+| Mouse | Select and launch |
 
 ---
 
-# Building
+# Threading Model
 
-Clone the repository
+Searching never blocks GTK.
 
-```bash
-git clone https://github.com/Momking/Tarang.git
-
-cd Tarang
+```
+Search Request
+       │
+       ▼
+Background Thread
+       │
+       ▼
+Plugin Search
+       │
+       ▼
+GLib.idle_add()
+       │
+       ▼
+Main GTK Thread
 ```
 
-Create a virtual environment
-
-```bash
-python -m venv .venv
-```
-
-Activate
-
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-Run
-
-```bash
-python src/main.py
-```
+GTK widgets are only accessed from the main thread.
 
 ---
 
-# Development Goals
+# Creating a Plugin
 
-Tarang aims to become more than an application launcher.
+Example:
 
-The long-term vision is to build a desktop command palette for Linux.
+```python
+class HelloPlugin:
 
-Potential capabilities include:
+    name = 
 
-- Launch applications
-- Open files
-- Focus existing windows
-- Clipboard management
-- System actions
-- Calculator
-- Unit conversion
-- AI integrations
-- Package management
-- Plugin ecosystem
+    description = 
+
+    author = 
+
+    version = 
+
+    def search(self, query):
+
+        if "hello".startswith(query):
+
+            return [
+                SearchResult(
+                    title="Hello",
+                    subtitle="Example Plugin",
+                    icon=None,
+                    data=None,
+                    query=query,
+                )
+            ]
+
+        return []
+
+    def activate(self, result):
+        print("Hello!")
+```
+
+Register it inside the PluginManager.
+
+---
+
+# Design Goals
+
+Tarang follows a few core principles:
+
+- Plugins should be independent.
+- Widgets should only display data.
+- Controllers coordinate logic.
+- Services provide reusable functionality.
+- UI should never block.
+- Features should be easy to extend.
 
 ---
 
 # Roadmap
 
-## Phase 1
-
-- Application launcher
-- Plugin architecture
-- File indexing
-- Clipboard
-- Commands
-
-**Status:** ✅ Complete
-
----
-
-## Phase 2
-
-- Thumbnail service
-- Window switcher
-- Favorites
-- Recent files
-- Theme improvements
-
-**Status:** 🚧 In Progress
-
----
-
-## Phase 3
-
-- Plugin SDK
-- Plugin marketplace
-- Theme engine
-- Calculator
-- Web search
-
----
-
-## Phase 4
-
-- AI plugins
-- Voice commands
-- Cloud sync
-- Workspace integration
+- [x] Calculator
+- [ ] Emoji search
+- [ ] Clipboard history
+- [ ] Browser history
+- [ ] Recent documents
+- [ ] File search improvements
+- [ ] Plugin discovery
+- [ ] Theme manager
+- [ ] Configuration file
+- [ ] Settings UI
+- [ ] Fuzzy matching improvements
 
 ---
 
@@ -438,42 +451,16 @@ Potential capabilities include:
 
 Contributions are welcome.
 
-If you'd like to contribute:
+Before opening a pull request:
 
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit your changes.
-4. Submit a pull request.
-
-Please ensure code follows the existing architecture and style.
-
----
-
-# Inspiration
-
-Tarang is inspired by projects such as:
-
-- Wofi
-- Rofi
-- GNOME Shell Search
-- Raycast
-- Alfred
-- Ulauncher
-- Walker
-- KRunner
-
-while focusing on a clean architecture and a native Wayland experience.
+- Follow the existing project structure.
+- Keep plugins independent of GTK.
+- Avoid blocking the UI thread.
+- Document new services and plugins.
+- Format code consistently.
 
 ---
 
 # License
 
 MIT License
-
----
-
-<div align="center">
-
-**Tarang** — *A modern command palette for the Linux desktop.*
-
-</div>
