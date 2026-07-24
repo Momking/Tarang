@@ -14,6 +14,11 @@ class SearchBar(Gtk.SearchEntry):
             None,
             (),
         ),
+        "focus-out": (
+            GObject.SignalFlags.RUN_FIRST,
+            None,
+            (),
+        ),
     }
 
     def __init__(self):
@@ -33,7 +38,10 @@ class SearchBar(Gtk.SearchEntry):
         key_controller.connect("key-pressed", self.on_key_pressed)
         self.add_controller(key_controller)
 
+        self.add_css_class("search-bar")
+
     def on_key_pressed(self, controller, keyval, keycode, state):
+        print("search: ", keyval)
 
         if keyval == Gdk.KEY_Down or keyval == Gdk.KEY_Right:
             self.emit("move-next")
@@ -41,6 +49,10 @@ class SearchBar(Gtk.SearchEntry):
 
         if keyval == Gdk.KEY_Up or keyval == Gdk.KEY_Left:
             self.emit("move-previous")
+            return True
+
+        if keyval == Gdk.KEY_Tab:
+            self.emit("focus-out")
             return True
 
         return False
