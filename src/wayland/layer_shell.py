@@ -1,3 +1,5 @@
+from ast import Gt
+
 import gi
 
 gi.require_version("Gtk", "4.0")
@@ -5,8 +7,17 @@ gi.require_version("Gtk4LayerShell", "1.0")
 
 from gi.repository import Gtk4LayerShell
 
+def get_window_size(window):
+    display = window.get_display()
+    monitor = display.get_monitors().get_item(0)
+    geometry = monitor.get_geometry()
 
-def setup(window):
+    window_width = geometry.width
+    window_height = geometry.height
+
+    return window_width, window_height,
+
+def setup_launcher(window):
     Gtk4LayerShell.init_for_window(window)
 
     Gtk4LayerShell.set_layer(
@@ -19,16 +30,17 @@ def setup(window):
         Gtk4LayerShell.KeyboardMode.ON_DEMAND,
     )
 
+    window_width, window_height = get_window_size(window)
+    # left = (geometry.width - window_width) // 2
+    # top = (geometry.height - window_height) // 2
+    window.set_default_size(window_width/2, window_height/1.5)
+
     Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.TOP, True)
     Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.LEFT, False)
-    Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.RIGHT, False)
     Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.BOTTOM, False)
+    Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.RIGHT, False)
 
-    Gtk4LayerShell.set_margin(
-        window,
-        Gtk4LayerShell.Edge.TOP,
-        180,
-    )
+    Gtk4LayerShell.set_margin(window, Gtk4LayerShell.Edge.TOP, 60)
+    # Gtk4LayerShell.set_margin(window, Gtk4LayerShell.Edge.LEFT, 400)
 
-
-    Gtk4LayerShell.set_namespace(window, "tarang")
+    Gtk4LayerShell.set_namespace(window, "tarang-launcher")
