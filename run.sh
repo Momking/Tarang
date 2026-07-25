@@ -23,8 +23,6 @@ if [[ -z "${LAYER_SHELL_LIB}" ]]; then
     exit 1
 fi
 
-echo "Using: $LAYER_SHELL_LIB"
-
 export LD_PRELOAD="$LAYER_SHELL_LIB${LD_PRELOAD:+:$LD_PRELOAD}"
 
 exec python3 src/main.py "$@"
