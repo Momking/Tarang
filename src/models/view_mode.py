@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class PluginMode(Enum):
+class ViewMode(Enum):
     GRID = "grid"
     LIST = "list"
     
