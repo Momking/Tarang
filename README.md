@@ -2,7 +2,7 @@
 
 > A fast, extensible Wayland application launcher written in Python using GTK4 and Layer Shell.
 
-Tarang is a modern launcher designed around a plugin architecture. Instead of hardcoding application search, clipboard history, files, or other sources, every search provider is implemented as a plugin.
+Tarang is a modern launcher designed around a Mo architecture. Instead of hardcoding application search, clipboard history, files, or other sources, every search provider is implemented as a plugin.
 
 The project aims to be:
 
