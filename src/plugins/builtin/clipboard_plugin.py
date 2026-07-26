@@ -19,7 +19,7 @@ class ClipboardPlugin(Plugin):
 
     priority = 100
 
-    MAX_PREVIEW = 20
+    MAX_PREVIEW = 50
 
     def __init__(
         self,

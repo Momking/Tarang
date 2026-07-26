@@ -2,6 +2,7 @@ from gi.repository import Gtk, GObject, Gio, Gdk
 
 from widgets.app_card import AppCard
 from models.plugin_result_item import PluginResultItem
+from models.view_mode import ViewMode
 
 
 class AppGrid(Gtk.ScrolledWindow):
@@ -12,14 +13,14 @@ class AppGrid(Gtk.ScrolledWindow):
                 None,
                 (object,),
             ),
-            "focus-search": (
+            "focus-panel": (
                 GObject.SignalFlags.RUN_FIRST,
                 None,
                 (),
             ),
         }
 
-    def __init__(self):
+    def __init__(self, plugin_mode):
         super().__init__()
 
         self.set_vexpand(True)
@@ -32,6 +33,8 @@ class AppGrid(Gtk.ScrolledWindow):
             PluginResultItem
         )
 
+        # print("store", self.store.get_n_items())
+
         self.selection = Gtk.SingleSelection(
             model=self.store
         )
@@ -41,42 +44,59 @@ class AppGrid(Gtk.ScrolledWindow):
             self.on_selection_changed,
         )
 
-        factory = Gtk.SignalListItemFactory()
+        self.factory = Gtk.SignalListItemFactory()
 
-        factory.connect(
-            "setup",
-            self.on_setup,
-        )
+        self.factory.connect("setup", self.on_setup)
+        self.factory.connect("bind", self.on_bind)
+        self.factory.connect("unbind", self.on_unbind)
 
-        factory.connect(
-            "bind",
-            self.on_bind,
-        )
+        self.view_mode = plugin_mode
 
-        factory.connect(
-            "unbind",
-            self.on_unbind,
-        )
+        self.rebuild_view(plugin_mode)
 
-        self.grid = Gtk.GridView(
-            model=self.selection,
-            factory=factory,
-        )
+        key_controller = Gtk.EventControllerKey.new()
+        key_controller.connect("key-pressed", self.on_key_pressed)
+        self.add_controller(key_controller)
 
-        self.grid.connect(
+    def rebuild_view(self, mode: ViewMode):
+
+        if hasattr(self, "grid"):
+            self.grid.unparent()
+
+        if mode == ViewMode.GRID:
+            grid = Gtk.GridView(
+                model=self.selection,
+                factory=self.factory,
+            )
+
+            grid.set_min_columns(3)
+            grid.set_max_columns(3)
+
+        else:
+            grid = Gtk.ListView(
+                model=self.selection,
+                factory=self.factory,
+            )
+
+        grid.connect(
             "activate",
             self.on_activate,
         )
 
-        self.grid.set_enable_rubberband(False)
+        grid.set_enable_rubberband(False)
+        grid.add_css_class("results")
 
-        self.columns = 3
-        self.grid.set_max_columns(self.columns)
-        self.grid.set_min_columns(3)
+        self.grid = grid
+        self.set_child(grid)
 
-        self.set_child(self.grid)
+        self.view_mode = mode
 
-        self.grid.add_css_class("results")
+    def set_view_mode(self, mode):
+
+        if mode == self.view_mode:
+            return
+
+        self.rebuild_view(mode)
 
     def set_results(self, results):
 
@@ -205,3 +225,9 @@ class AppGrid(Gtk.ScrolledWindow):
                 card.add_css_class("selected")
             else:
                 card.remove_css_class("selected")
+
+    def on_key_pressed(self, controller, keyval, keycode, state):
+        print("app-grid: key pressed: ", Gdk.keyval_name(keyval))
+        if keyval == Gdk.KEY_Tab:
+            self.emit("focus-panel")
+        return True

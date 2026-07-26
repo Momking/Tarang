@@ -1,39 +1,63 @@
 window {
-    background-color: transparent;
+    background: transparent;
 }
 
 .launcher {
-    padding: 24px;
+    padding: 28px;
 
-    border-radius: 18px;
+    border-radius: 24px;
 
-    background: rgba(130,30,30,0.82);
+    background: rgba(22, 22, 28, 0.72);
 
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
 }
 
 searchentry {
-    min-height: 48px;
+    min-height: 54px;
 
-    padding: 0 16px;
+    padding: 0 18px;
 
-    border-radius: 14px;
+    border-radius: 18px;
+
+    background: rgba(35,35,40,0.75);
+
+    border: 1px solid rgba(255,255,255,0.08);
 
     font-size: 18px;
 }
 
+searchentry:focus {
+    border: 1px solid #4F8CFF;
+}
+
+.results {
+    padding: 18px;
+    background: transparent;
+}
+
 .app-card {
-    min-width: 30px;
-    min-height: 40px;
+    min-width: 40px;
+    min-height: 48px;
 
-    padding: 14px;
+    padding: 18px;
 
-    border-radius: 14px;
-    background-color: transparent;
-    background-image: none;
-    border: none;
+    border-radius: 18px;
+
+    background: rgba(255,255,255,0.02);
+
+    border: 1px solid transparent;
+
+    transition: 180ms ease;
+}
+
+.app-card:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.app-card.selected {
+    background: rgba(30,120,100,0.35);
+
+    border: 1px solid rgba(70,255,200,0.35);
 }
 
 .activatable {
@@ -41,30 +65,57 @@ searchentry {
     border-radius: 18px;
 }
 
-.app-card.selected {
-    background-color: #0a4239
-}
-
-.app-card:hover {
-    background-color: #0a4239;
-}
-
 .icon {
-    -gtk-icon-size: 24px;
+    -gtk-icon-size: 34px;
 }
 
 .title {
     font-size: 15px;
-    font-weight: bold;
-}
-
-.results {
-    background-color: transparent;
-    padding: 20px;
+    font-weight: 600;
 }
 
 .search-bar {
     background-color: transparent;
     padding: 10px;
     border-radius: 28px;
+}
+
+.panel-window {
+
+    padding: 14px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,0.03);
+
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.panel-window-button {
+
+    min-height: 42px;
+
+    border-radius: 14px;
+
+    background: transparent;
+
+    border: none;
+}
+
+.panel-window-button:hover {
+
+    background: rgba(255,255,255,0.08);
+}
+
+.panel-window-button-active {
+
+    background: rgba(30,120,100,0.35);
+
+    border: 1px solid rgba(70,255,200,0.4);
+}
+
+.app-card,
+.panel-window-button,
+searchentry {
+    transition: 180ms ease;
 }

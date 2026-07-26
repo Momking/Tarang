@@ -15,7 +15,7 @@ class FileIndexService:
     SEARCH_DIRS = (
         Path.home() / "Documents",
         Path.home() / "Downloads",
-        Path.home() / "Projects",
+        Path.home() / "Desktop",
     )
 
     CACHE_FILE = (
@@ -107,42 +107,43 @@ class FileIndexService:
         new_files.sort(key=lambda f: str(f.path))
 
         with self.lock:
-            old_paths = {f.path for f in self.files}
-            new_paths = {f.path for f in new_files}
+            # old_paths = {f.path for f in self.files}
+            # new_paths = {f.path for f in new_files}
 
             if len(new_files) != len(self.files):
-                print(
-                    "Different length:",
-                    len(self.files),
-                    len(new_files),
-                )
+                pass
+                # print(
+                    # "Different length:",
+                #     len(self.files),
+                #     len(new_files),
+                # )
 
             elif new_files != self.files:
 
                 for old, new in zip(self.files, new_files):
 
                     if old != new:
-                        print("First difference:")
+                        # print("First difference:")
                         print(old)
                         print(new)
                         break
 
             else:
-                print("Index unchanged")
+                # print("Index unchanged")
                 return
 
             self.files = new_files
 
-        missing = new_paths - old_paths
-        extra = old_paths - new_paths
+        # missing = new_paths - old_paths
+        # extra = old_paths - new_paths
 
-        print(f"Missing in cache: {len(missing)}")
-        for p in sorted(missing):
-            print(" +", p)
+        # print(f"Missing in cache: {len(missing)}")
+        # for p in sorted(missing):
+        #     print(" +", p)
 
-        print(f"Extra in cache: {len(extra)}")
-        for p in sorted(extra):
-            print(" -", p)
+        # print(f"Extra in cache: {len(extra)}")
+        # for p in sorted(extra):
+        #     print(" -", p)
 
         self.schedule_save()
 
