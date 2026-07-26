@@ -23,7 +23,7 @@ class PluginManager:
 
         self.plugins.append(plugin)
 
-    def search(self, query: str, limit: int = 50) -> list[PluginResult]:
+    def search(self, query: str, plugin_mode: str, limit: int = 50) -> list[PluginResult]:
         results: list[PluginResult] = []
 
         for plugin in sorted(
@@ -31,6 +31,8 @@ class PluginManager:
             key=lambda p: p.priority,
             reverse=True,
         ):
+            if plugin_mode and plugin.name != plugin_mode:
+                continue
             plugin_results = plugin.search(query, limit)
 
             results.extend(

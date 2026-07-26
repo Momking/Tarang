@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from models.plugin_mode import PluginMode
+
 
 class PluginSettings:
 
@@ -14,11 +16,8 @@ class PluginSettings:
     )
 
     DEFAULTS = {
-        "applications": True,
-        "calculator": True,
-        "clipboard": True,
-        "commands": True,
-        "files": True,
+        plugin.value: True
+        for plugin in PluginMode
     }
 
     def __init__(self) -> None:
