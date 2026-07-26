@@ -434,8 +434,8 @@ Tarang follows a few core principles:
 # Roadmap
 
 - [x] Calculator
-- [ ] Emoji search
-- [ ] Clipboard history
+- [x] Emoji search
+- [x] Clipboard history
 - [ ] Browser history
 - [ ] Recent documents
 - [ ] File search improvements
