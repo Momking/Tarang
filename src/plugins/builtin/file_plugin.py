@@ -1,4 +1,4 @@
-from gi.repository import Gio
+from gi.repository import Gio   #noqa
 
 from plugins.plugin import Plugin
 

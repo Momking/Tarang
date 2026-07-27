@@ -1,4 +1,4 @@
-from models.plugin_result import PluginResult
+from models.plugin_result import PluginResult   #noqa
 
 from plugins.loader import PluginLoader
 

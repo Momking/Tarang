@@ -3,7 +3,7 @@ from gi.repository import Gtk, Gdk, GObject
 
 class SearchBar(Gtk.Box):
 
-    __gsignals__ = {
+    __gsignals__ = {    # noqa: RUF012
         "close": (
             GObject.SignalFlags.RUN_FIRST,
             None,

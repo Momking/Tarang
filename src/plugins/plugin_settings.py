@@ -15,7 +15,7 @@ class PluginSettings:
         / "plugins.json"
     )
 
-    DEFAULTS = {
+    DEFAULTS = {    # noqa: RUF012
         plugin.value: True
         for plugin in PluginMode
     }

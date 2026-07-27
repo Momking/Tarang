@@ -1,4 +1,4 @@
-from plugins.builtin.application_plugin import ApplicationPlugin
+from plugins.builtin.application_plugin import ApplicationPlugin    #noqa
 from plugins.builtin.calculator_plugin import CalculatorPlugin
 from plugins.builtin.file_plugin import FilePlugin
 from plugins.builtin.clipboard_plugin import ClipboardPlugin

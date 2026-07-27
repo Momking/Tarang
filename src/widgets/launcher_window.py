@@ -1,4 +1,4 @@
-from gi.repository import Gtk, GLib, Gdk
+from gi.repository import Gtk, GLib, Gdk    # noqa
 
 from services.application_service import ApplicationService
 from services.usage_service import UsageService

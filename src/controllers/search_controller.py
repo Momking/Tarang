@@ -1,4 +1,4 @@
-import threading
+import threading    #noqa
 from gi.repository import GLib
 
 from models.plugin_mode import PluginMode

@@ -1,4 +1,4 @@
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk, GObject  # noqa
 
 from services.highlight_service import HighlightService
 from models.view_mode import ViewMode

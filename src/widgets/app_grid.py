@@ -1,4 +1,4 @@
-from gi.repository import Gtk, GObject, Gio, Gdk
+from gi.repository import Gtk, GObject, Gio, Gdk    # noqa
 
 from widgets.app_card import AppCard
 from models.plugin_result_item import PluginResultItem

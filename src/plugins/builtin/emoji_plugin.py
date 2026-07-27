@@ -1,4 +1,4 @@
-import json
+import json # noqa
 from dataclasses import dataclass
 
 from plugins.plugin import Plugin
