@@ -1,39 +1,109 @@
+/* ==========================================================
+ * Tarang Theme
+ * ========================================================== */
+
+@define-color bg rgba(25,25,30,.82);
+@define-color surface rgba(255,255,255,.03);
+
+@define-color border rgba(255,255,255,.08);
+@define-color border-soft rgba(255,255,255,.06);
+
+@define-color text rgba(255,255,255,.85);
+@define-color text-muted rgba(255,255,255,.65);
+@define-color text-faint rgba(255,255,255,.38);
+
+@define-color hover rgba(255,255,255,.05);
+
+@define-color accent rgba(30,120,100,.35);
+@define-color accent-border rgba(70,255,200,.50);
+
+
+/* ==========================================================
+ * Window
+ * ========================================================== */
+
 window {
     background: transparent;
 }
 
-.launcher {
-    padding: 28px;
 
-    border-radius: 24px;
+/* ==========================================================
+ * Launcher Sections
+ * ========================================================== */
 
-    background: rgba(22, 22, 28, 0.72);
-
-    border: 1px solid rgba(255,255,255,0.08);
+.launcher-header,
+.launcher-body,
+.launcher-footer {
+    background: @bg;
+    border: 1px solid @border;
 }
 
-searchentry {
-    min-height: 54px;
+.launcher-header {
+    padding: 20px;
 
-    padding: 0 18px;
+    border-bottom: none;
 
-    border-radius: 18px;
-
-    background: rgba(35,35,40,0.75);
-
-    border: 1px solid rgba(255,255,255,0.08);
-
-    font-size: 18px;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
 }
 
-searchentry:focus {
-    border: 1px solid #4F8CFF;
+.launcher-body {
+    padding: 12px 20px 20px;
 }
+
+.launcher-footer {
+    padding: 12px 20px;
+
+    border-top: none;
+
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+}
+
+
+/* ==========================================================
+ * Search Bar
+ * ========================================================== */
+
+.search-bar {
+    font-size: 20px;
+
+    padding: 2px;
+
+    border-radius: 14px;
+}
+
+entry.search {
+    background: transparent;
+    background-image: none;
+
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+entry.search:focus-within {
+    box-shadow: none;
+}
+
+entry.search text {
+    background: transparent;
+}
+
+
+/* ==========================================================
+ * Results Grid
+ * ========================================================== */
 
 .results {
     padding: 18px;
     background: transparent;
 }
+
+
+/* ==========================================================
+ * Cards
+ * ========================================================== */
 
 .app-card {
     min-width: 40px;
@@ -43,7 +113,7 @@ searchentry:focus {
 
     border-radius: 18px;
 
-    background: rgba(255,255,255,0.02);
+    background: rgba(255,255,255,.02);
 
     border: 1px solid transparent;
 
@@ -51,71 +121,163 @@ searchentry:focus {
 }
 
 .app-card:hover {
-    background: rgba(255,255,255,0.05);
+    background: @hover;
+    border-color: rgba(255,255,255,.08);
 }
 
 .app-card.selected {
-    background: rgba(30,120,100,0.35);
-
-    border: 1px solid rgba(70,255,200,0.35);
+    background: @accent;
+    border-color: @accent-border;
 }
 
 .activatable {
-    background-color: transparent;
+    background: transparent;
     border-radius: 18px;
 }
 
+
+/* ==========================================================
+ * Icons & Labels
+ * ========================================================== */
+
 .icon {
-    -gtk-icon-size: 34px;
+    -gtk-icon-size: 30px;
 }
 
 .title {
     font-size: 15px;
     font-weight: 600;
+    color: @text;
 }
 
-.search-bar {
-    background-color: transparent;
-    padding: 10px;
-    border-radius: 28px;
+.emoji {
+    margin-top: -25px;
+    font-size: 35px;
 }
+
+
+/* ==========================================================
+ * Dock
+ * ========================================================== */
+
+.dock-window {
+    padding: 14px;
+
+    background: @bg;
+
+    border-radius: 18px;
+
+    border: 1px solid @border-soft;
+}
+
+
+/* ==========================================================
+ * Plugin Panel
+ * ========================================================== */
 
 .panel-window {
-
     padding: 14px;
+
+    background: @surface;
 
     border-radius: 20px;
 
-    background: rgba(255,255,255,0.03);
-
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid @border-soft;
 }
 
 .panel-window-button {
-
     min-height: 42px;
-
-    border-radius: 14px;
 
     background: transparent;
 
     border: none;
+
+    border-radius: 14px;
+
+    transition: 180ms ease;
 }
 
 .panel-window-button:hover {
-
-    background: rgba(255,255,255,0.08);
+    background: @hover;
 }
 
 .panel-window-button-active {
-
-    background: rgba(30,120,100,0.35);
-
-    border: 1px solid rgba(70,255,200,0.4);
+    background: @accent;
+    border: 1px solid @accent-border;
 }
+
+
+/* ==========================================================
+ * Dropdown
+ * ========================================================== */
+
+.dropdown {
+    border-radius: 14px;
+}
+
+.dropdown > button {
+    min-height: 36px;
+
+    padding: 8px 12px;
+
+    background: transparent;
+
+    border: none;
+
+    box-shadow: none;
+
+    border-radius: 14px;
+
+    color: @text-muted;
+
+    transition: 180ms ease;
+}
+
+.dropdown > button:hover {
+    background: @hover;
+}
+
+.dropdown > button:checked {
+    background: rgba(255,255,255,.08);
+}
+
+.dropdown > button:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+
+.dropdown label {
+    font-size: 14px;
+    color: @text-muted;
+}
+
+.dropdown arrow {
+    color: rgba(255,255,255,.60);
+}
+
+
+/* ==========================================================
+ * Footer
+ * ========================================================== */
+
+.launcher-footer-label1 {
+    font-size: 14px;
+    color: @text-muted;
+}
+
+.launcher-footer-label2 {
+    font-size: 12px;
+    color: @text-faint;
+}
+
+
+/* ==========================================================
+ * Shared Animations
+ * ========================================================== */
 
 .app-card,
 .panel-window-button,
+.dropdown > button,
 searchentry {
     transition: 180ms ease;
 }
