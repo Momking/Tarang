@@ -7,13 +7,23 @@ from models.view_mode import ViewMode
 
 class AppGrid(Gtk.ScrolledWindow):
 
-    __gsignals__ = {
+    __gsignals__ = {  # noqa
             "app-activated": (
                 GObject.SignalFlags.RUN_FIRST,
                 None,
                 (object,),
             ),
-            "focus-panel": (
+            "focus-search": (
+                GObject.SignalFlags.RUN_FIRST,
+                None,
+                (),
+            ),
+            "next-plugin": (
+                GObject.SignalFlags.RUN_FIRST,
+                None,
+                (),
+            ),
+            "close": (
                 GObject.SignalFlags.RUN_FIRST,
                 None,
                 (),
@@ -32,8 +42,6 @@ class AppGrid(Gtk.ScrolledWindow):
         self.store = Gio.ListStore.new(
             PluginResultItem
         )
-
-        # print("store", self.store.get_n_items())
 
         self.selection = Gtk.SingleSelection(
             model=self.store
@@ -58,7 +66,9 @@ class AppGrid(Gtk.ScrolledWindow):
         key_controller.connect("key-pressed", self.on_key_pressed)
         self.add_controller(key_controller)
 
+
     def rebuild_view(self, mode: ViewMode):
+        self.store.remove_all()
 
         if hasattr(self, "grid"):
             self.grid.unparent()
@@ -69,8 +79,8 @@ class AppGrid(Gtk.ScrolledWindow):
                 factory=self.factory,
             )
 
-            grid.set_min_columns(3)
-            grid.set_max_columns(3)
+            grid.set_min_columns(4)
+            grid.set_max_columns(4)
 
         else:
             grid = Gtk.ListView(
@@ -82,6 +92,8 @@ class AppGrid(Gtk.ScrolledWindow):
             "activate",
             self.on_activate,
         )
+
+        grid.set_single_click_activate(True)
 
         grid.set_enable_rubberband(False)
         grid.add_css_class("results")
@@ -114,7 +126,7 @@ class AppGrid(Gtk.ScrolledWindow):
         return self.store.get_n_items() > 0
 
     def on_setup(self, factory, list_item):
-        card = AppCard()
+        card = AppCard(self.view_mode)
         list_item.set_child(card)
 
         list_item.card = card
@@ -168,7 +180,6 @@ class AppGrid(Gtk.ScrolledWindow):
         )
 
     def on_activate(self, grid, position):
-        print("ACTIVATE", position)
 
         item = self.store.get_item(position)
 
@@ -227,7 +238,19 @@ class AppGrid(Gtk.ScrolledWindow):
                 card.remove_css_class("selected")
 
     def on_key_pressed(self, controller, keyval, keycode, state):
-        print("app-grid: key pressed: ", Gdk.keyval_name(keyval))
+        ctrl = bool(state & Gdk.ModifierType.CONTROL_MASK)
+
+        if ctrl and keyval == Gdk.KEY_Tab:
+            self.emit("next-plugin")
+            return True
+
         if keyval == Gdk.KEY_Tab:
-            self.emit("focus-panel")
+            self.emit("focus-search")
+
+        if keyval == Gdk.KEY_Escape:
+            self.emit("close")
+            return True
+
         return True
+
+    # def on_grid_clicked(self):
