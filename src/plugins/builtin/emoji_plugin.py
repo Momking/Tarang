@@ -45,13 +45,13 @@ class EmojiPlugin(Plugin):
 
         return [
             SearchResult(
-                title=f"{emoji.emoji}  {emoji.name}",
+                title=f"{emoji.emoji}",
                 subtitle="Emoji",
                 icon=None,
                 data=emoji.emoji,
                 query=query,
             )
-            for emoji in self.emojis
+            for emoji in self.emojis[:]
             if query in emoji.name.lower()
         ]
 
