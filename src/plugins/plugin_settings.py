@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from models.plugin_mode import PluginMode
+
 
 class PluginSettings:
 
@@ -13,12 +15,9 @@ class PluginSettings:
         / "plugins.json"
     )
 
-    DEFAULTS = {
-        "applications": True,
-        "calculator": True,
-        "clipboard": True,
-        "commands": True,
-        "files": True,
+    DEFAULTS = {    # noqa: RUF012
+        plugin.value: True
+        for plugin in PluginMode
     }
 
     def __init__(self) -> None:

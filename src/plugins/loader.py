@@ -1,8 +1,9 @@
-from plugins.builtin.application_plugin import ApplicationPlugin
+from plugins.builtin.application_plugin import ApplicationPlugin    #noqa
 from plugins.builtin.calculator_plugin import CalculatorPlugin
 from plugins.builtin.file_plugin import FilePlugin
 from plugins.builtin.clipboard_plugin import ClipboardPlugin
 from plugins.builtin.command_plugin import CommandPlugin
+from plugins.builtin.emoji_plugin import EmojiPlugin
 
 from plugins.plugin import Plugin
 from plugins.plugin_settings import PluginSettings
@@ -31,6 +32,9 @@ class PluginLoader:
                 container,
             ),
             CommandPlugin(
+                container,
+            ),
+            EmojiPlugin(
                 container,
             ),
         ]

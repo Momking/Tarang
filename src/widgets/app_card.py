@@ -1,21 +1,21 @@
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk, GObject  # noqa
 
 from services.highlight_service import HighlightService
+from models.view_mode import ViewMode
 
 
-class AppCard(Gtk.Button):
+class AppCard(Gtk.Box):
 
-    def __init__(self):
+    def __init__(self, view_mode):
         super().__init__()
 
         self.result = None
+        self.view_mode = view_mode
 
         # self.set_has_frame(False)
 
-        self.box = Gtk.Box(
-            orientation=Gtk.Orientation.VERTICAL,
-            spacing=8,
-        )
+        self.set_orientation(Gtk.Orientation.VERTICAL)
+        self.set_spacing(8)
 
         self.image = Gtk.Image()
         # self.image.set_pixel_size(64)
@@ -26,10 +26,8 @@ class AppCard(Gtk.Button):
             Gtk.Justification.CENTER
         )
 
-        self.box.append(self.image)
-        self.box.append(self.label)
-
-        self.set_child(self.box)
+        self.append(self.image)
+        self.append(self.label)
 
         self.set_focusable(False)
 
@@ -38,6 +36,10 @@ class AppCard(Gtk.Button):
         self.image.add_css_class("icon")
 
         self.label.add_css_class("title")
+        if self.view_mode == ViewMode.LIST:
+            self.set_orientation(Gtk.Orientation.HORIZONTAL)
+            self.label.set_xalign(0.0)
+            self.label.set_hexpand(True)
 
     def set_result(self, result):
         self.result = result
@@ -65,3 +67,5 @@ class AppCard(Gtk.Button):
 
         if result.search_result.icon is not None:
             self.image.set_from_gicon(result.search_result.icon)
+        else:
+            self.label.add_css_class("emoji")

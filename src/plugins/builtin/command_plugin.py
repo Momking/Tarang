@@ -12,7 +12,7 @@ from services.icon_cache import IconCache
 
 class CommandPlugin(Plugin):
 
-    name = "command"
+    name = "commands"
 
     description = "Search command"
 

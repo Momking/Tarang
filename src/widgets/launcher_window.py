@@ -1,4 +1,4 @@
-from gi.repository import Gtk, GLib, Gdk
+from gi.repository import Gtk, GLib, Gdk    # noqa
 
 from services.application_service import ApplicationService
 from services.usage_service import UsageService
@@ -6,23 +6,24 @@ from services.clipboard_service import ClipboardService
 from services.icon_cache import IconCache
 from services.thumbnail_service import ThumbnailService
 
-
 from controllers.search_controller import SearchController
 
 from plugins.manager import PluginManager
 
 from widgets.search_bar import SearchBar
 from widgets.app_grid import AppGrid
-from wayland.layer_shell import setup as setup_layer_shell
+from wayland.layer_shell import setup_launcher as setup_layer_shell
 
 from services.file_index_service import FileIndexService
 from core.container import Container
 from models.mode import FocusMode
+from models.view_mode import ViewMode
+from models.plugin_mode import PluginMode
 
 
 class LauncherWindow(Gtk.ApplicationWindow):
 
-    def __init__(self, application):
+    def __init__(self, application, plugin_state):
         super().__init__(application=application)
 
         # Configure window
@@ -36,7 +37,13 @@ class LauncherWindow(Gtk.ApplicationWindow):
         # Create services
         self.container = Container()
 
+        self.view_mode = ViewMode.GRID
+
         self.mode = FocusMode.SEARCH
+
+        self.plugin_state = plugin_state
+
+        self.plugin_mode = plugin_state.get_plugin()
 
         self.container.register(
             UsageService,
@@ -76,11 +83,16 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         # Create Widgets
         self.search = SearchBar()
-        self.grid = AppGrid()
+        self.grid = AppGrid(self.view_mode)
 
         self.controller = SearchController(
             self.plugin_manager,
             self.grid,
+        )
+
+        plugin_state.connect(
+            "plugin-changed",
+            self.on_plugin_changed,
         )
 
         self.grid.connect(
@@ -90,20 +102,35 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         self.grid.connect(
             "focus-search",
-            lambda *_: self.search.grab_focus(),
+            lambda *_: self.focus_search(),
+        )
+
+        self.grid.connect(
+            "next-plugin",
+            lambda *_: self.plugin_state.next_plugin(),
+        )
+
+        self.grid.connect(
+            "close",
+            lambda *_: self.get_application().quit(),
         )
 
         # Connect signals
         self.search.connect(
             "search-changed",
             lambda entry: self.controller.search(
-                entry.get_text()
+                entry.get_text(), self.plugin_mode
             ),
         )
 
         self.search.connect(
             "activate",
             lambda *_: self.controller.activate_selected(),
+        )
+
+        self.search.connect(
+            "next-plugin",
+            lambda *_: self.plugin_state.next_plugin(),
         )
 
         self.search.connect(
@@ -121,40 +148,72 @@ class LauncherWindow(Gtk.ApplicationWindow):
             lambda *_: self.focus_results(),
         )
 
+        self.search.connect(
+            "close",
+            lambda *_: self.get_application().quit(),
+        )
+
         self.controller.initialize()
 
         # Build layout
-        outer = Gtk.Box()
+        outer = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+        )
 
-        outer.set_hexpand(True)
-        outer.set_vexpand(True)
+        #
+        # Header
+        #
+        header = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+        )
+        header.add_css_class("launcher-header")
+        header.append(self.search)
 
-        outer.set_halign(Gtk.Align.CENTER)
-        outer.set_valign(Gtk.Align.START)
+        separator = Gtk.Separator(
+            orientation=Gtk.Orientation.HORIZONTAL,
+        )
 
-        content = Gtk.Box(
+        #
+        # Body
+        #
+        body = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
             spacing=12,
         )
+        body.add_css_class("launcher-body")
 
-        content.add_css_class("launcher")
+        body.append(self.grid)
 
-        content.set_size_request(800, 700)
+        self.footer = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=12,
+        )
 
-        content.append(self.search)
-        content.append(self.grid)
+        self.label1 = Gtk.Label(label=self.plugin_mode.upper())
+        self.label2 = Gtk.Label(label="Press Ctrl+Tab to change plugin")
+        self.label1.add_css_class("launcher-footer-label1")
+        self.label2.add_css_class("launcher-footer-label2")
 
-        outer.append(content)
+        self.label1.set_hexpand(False)
+        self.label2.set_hexpand(True)
+        self.label2.set_halign(Gtk.Align.END)
+        self.label2.set_xalign(1.0)
+
+        self.footer.append(self.label1)
+        self.footer.append(self.label2)
+
+        self.footer.add_css_class("launcher-footer")
+        # footer.append(self.panel)
+
+        # body.append(footer)
+
+        outer.append(header)
+        outer.append(separator)
+        outer.append(body)
+        outer.append(separator)
+        outer.append(self.footer)
 
         self.set_child(outer)
-
-        # Key press controller
-        controller_event = Gtk.EventControllerKey()
-        controller_event.connect(
-            "key-pressed",
-            self.on_key_pressed,
-        )
-        self.add_controller(controller_event)
 
         # Search entry focus
         controller_search = Gtk.ShortcutController()
@@ -189,24 +248,24 @@ class LauncherWindow(Gtk.ApplicationWindow):
 
         self.search.grab_focus()
 
-    def on_key_pressed(
-        self,
-        controller,
-        keyval,
-        keycode,
-        state,
-    ):
-        print("key name: ", Gdk.keyval_name(keyval))
+    def on_plugin_changed(self, plugin_state, mode):
+        self.plugin_mode = mode
+        self.change_footer(mode.upper())
 
-        if keyval == Gdk.KEY_Tab:
+        if self.plugin_mode == PluginMode.FILES or \
+            self.plugin_mode == PluginMode.CLIPBOARD:
+            self.grid.set_view_mode(ViewMode.LIST)
+        elif self.plugin_mode == PluginMode.APPLICATIONS or \
+            self.plugin_mode == PluginMode.CALCULATOR or \
+            self.plugin_mode == PluginMode.COMMANDS or \
+            self.plugin_mode == PluginMode.EMOJI:
+            self.grid.set_view_mode(ViewMode.GRID)
 
-            if self.mode == FocusMode.SEARCH:
-                self.mode = FocusMode.RESULTS
-                self.focus_results()
-            else:
-                self.mode = FocusMode.SEARCH
-                self.focus_search()
+        self.controller.search(
+            self.search.get_text(),
+            self.plugin_mode,
+        )
+        self.focus_search()
 
-            return True
-
-        return False
+    def change_footer(self, mode):
+        self.label1.set_text(mode)

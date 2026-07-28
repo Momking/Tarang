@@ -1,5 +1,7 @@
-import threading
+import threading    #noqa
 from gi.repository import GLib
+
+from models.plugin_mode import PluginMode
 
 
 class SearchController:
@@ -18,9 +20,9 @@ class SearchController:
         self.pending_search = None
 
     def initialize(self):
-        self.search("")
+        self.search("", PluginMode.APPLICATIONS)
 
-    def start_search(self, query):
+    def start_search(self, query, plugin_mode):
 
         self.pending_search = None
 
@@ -30,13 +32,13 @@ class SearchController:
 
         threading.Thread(
             target=self.search_worker,
-            args=(query, generation),
+            args=(query, plugin_mode, generation),
             daemon=True,
         ).start()
 
         return False
 
-    def search(self, query):
+    def search(self, query, plugin_mode):
 
         if self.pending_search is not None:
             GLib.source_remove(self.pending_search)
@@ -45,6 +47,7 @@ class SearchController:
             self.SEARCH_DELAY_MS,
             self.start_search,
             query,
+            plugin_mode,
         )
 
     def finish_search(
@@ -63,10 +66,11 @@ class SearchController:
     def search_worker(
         self,
         query,
+        plugin_mode,
         generation,
     ):
 
-        results = self.plugins.search(query)
+        results = self.plugins.search(query, plugin_mode)
 
         GLib.idle_add(
             self.finish_search,

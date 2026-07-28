@@ -1,4 +1,4 @@
-from gi.repository import Gio
+from gi.repository import Gio   #noqa
 
 from plugins.plugin import Plugin
 
@@ -60,7 +60,7 @@ class FilePlugin(Plugin):
 
             SearchResult(
 
-                title=file.name[:10],
+                title=str(file.path)[:10] + "..." + file.name,
 
                 subtitle=str(file.path),
 
