@@ -125,7 +125,7 @@ class SearchBar(Gtk.Box):
         self.entry.grab_focus()
 
     def set_placeholder(self, text):
-        self.entry.set_placeholder_text(text)
+        self.entry.set_placeholder_text("Search " + text + "...")
 
     #
     # Filters
@@ -174,10 +174,6 @@ class SearchBar(Gtk.Box):
         keycode,
         state,
     ):
-        print(
-            Gdk.keyval_name(keyval),
-            int(state),
-        )
 
         ctrl = bool(state & Gdk.ModifierType.CONTROL_MASK)
 

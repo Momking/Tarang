@@ -251,6 +251,7 @@ class LauncherWindow(Gtk.ApplicationWindow):
     def on_plugin_changed(self, plugin_state, mode):
         self.plugin_mode = mode
         self.change_footer(mode.upper())
+        self.search.set_placeholder(plugin_state.get_plugin())
 
         if self.plugin_mode == PluginMode.FILES or \
             self.plugin_mode == PluginMode.CLIPBOARD:
