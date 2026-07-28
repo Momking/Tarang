@@ -41,7 +41,12 @@ Planned features:
 
 # Screenshots
 
-![](/src/resources/image.png)
+<table>
+  <tr>
+    <td><img src="/src/resources/image2.png" width="100%"></td>
+    <td><img src="/src/resources/image3.png" width="100%"></td>
+  </tr>
+</table>
 
 ---
 
