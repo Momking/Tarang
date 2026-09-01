@@ -31,14 +31,14 @@ def setup_launcher(window):
     window_width, window_height = get_window_size(window)
     # left = (geometry.width - window_width) // 2
     # top = (geometry.height - window_height) // 2
-    window.set_default_size(window_width/2, window_height/1.5)
+    # window.set_default_size(window_width/2, window_height/1.5)
 
     Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.TOP, True)
     Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.LEFT, False)
     Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.BOTTOM, False)
     Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.RIGHT, False)
 
-    Gtk4LayerShell.set_margin(window, Gtk4LayerShell.Edge.TOP, 60)
+    Gtk4LayerShell.set_margin(window, Gtk4LayerShell.Edge.TOP, window_height//4)
     # Gtk4LayerShell.set_margin(window, Gtk4LayerShell.Edge.LEFT, 400)
 
     Gtk4LayerShell.set_namespace(window, "tarang-launcher")
