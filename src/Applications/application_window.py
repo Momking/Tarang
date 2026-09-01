@@ -4,13 +4,15 @@ from gi.repository import Gtk
 
 from wayland.layer_shell import setup_launcher as setup_layer_shell
 from Applications.application_scrollable_window import ApplicationScrollableWindow
+from Applications.application_header import ApplicationHeader
+from Applications.application_footer import ApplicationFooter
 
 
 class ApplicationWindow(Gtk.Window):
 
     def __init__(self):
         super().__init__()
-        self.set_default_size(600, 400)
+        self.set_default_size(400, 600)
 
         setup_layer_shell(self)
 
@@ -20,18 +22,19 @@ class ApplicationWindow(Gtk.Window):
         )
 
         self.set_child(self.window)
+        self.add_css_class("app-window")
 
         # Header
-        header = Gtk.Label(label="Header\n")
+        header = ApplicationHeader()
         self.window.append(header)
 
         # Add a scrolled window
         scrolled_window = ApplicationScrollableWindow()
         scrolled_window.set_vexpand(True)
-        scrolled_window.set_hexpand(True) # Optional: ensures it fills left-to-right as well
+        scrolled_window.set_hexpand(True)
         scrolled_window.set_valign(Gtk.Align.FILL)
         self.window.append(scrolled_window)
 
         # Footer
-        footer = Gtk.Label(label="Footer")
+        footer = ApplicationFooter()
         self.window.append(footer)
