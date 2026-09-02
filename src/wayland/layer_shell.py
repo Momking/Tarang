@@ -9,13 +9,9 @@ def get_window_size(window):
     display = window.get_display()
     monitor = display.get_monitors().get_item(0)
     geometry = monitor.get_geometry()
+    return geometry.width, geometry.height
 
-    window_width = geometry.width
-    window_height = geometry.height
-
-    return window_width, window_height,
-
-def setup_launcher(window):
+def setup_launcher(window, starting_left_margin):
     Gtk4LayerShell.init_for_window(window)
 
     Gtk4LayerShell.set_layer(
@@ -29,17 +25,22 @@ def setup_launcher(window):
     )
 
     window_width, window_height = get_window_size(window)
+    window.set_default_size(600, 600)
     # left = (geometry.width - window_width) // 2
     # top = (geometry.height - window_height) // 2
     # window.set_default_size(window_width/2, window_height/1.5)
 
     Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.TOP, True)
-    Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.LEFT, False)
+    Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.LEFT, True)
     Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.BOTTOM, False)
     Gtk4LayerShell.set_anchor(window, Gtk4LayerShell.Edge.RIGHT, False)
 
-    Gtk4LayerShell.set_margin(window, Gtk4LayerShell.Edge.TOP, window_height//4)
-    # Gtk4LayerShell.set_margin(window, Gtk4LayerShell.Edge.LEFT, 400)
+    # Y-Axis placement
+    Gtk4LayerShell.set_margin(window, Gtk4LayerShell.Edge.TOP, window_height // 4)
+
+    # X-Axis placement managed dynamically by the slide controller
+    print(f"starting_left_margin: {starting_left_margin}")
+    Gtk4LayerShell.set_margin(window, Gtk4LayerShell.Edge.LEFT, starting_left_margin)
 
     Gtk4LayerShell.set_namespace(window, "tarang-launcher")
 
