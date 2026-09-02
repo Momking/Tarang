@@ -10,11 +10,12 @@ from Applications.application_footer import ApplicationFooter
 
 class ApplicationWindow(Gtk.Window):
 
-    def __init__(self):
+    def __init__(self, is_initial=True):
         super().__init__()
-        self.set_default_size(400, 600)
+        # self.set_default_size(400, 600)
 
-        setup_layer_shell(self)
+        starting_margin = 600 if is_initial else 1800
+        setup_layer_shell(self, starting_left_margin=starting_margin)
 
         # Build layout
         self.window = Gtk.Box(
